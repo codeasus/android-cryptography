@@ -21,9 +21,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-//        RSACryptoUtil.generateKeyPair()
-//        RSACryptoUtil.generateCertificate(this)
-//        RSACryptoUtil.deleteCertificate(this)
+        RSACryptoUtil.generateKeyPair()
+
 
         val data = "This is some secret bs"
         Log.d(TAG, "Data: $data")

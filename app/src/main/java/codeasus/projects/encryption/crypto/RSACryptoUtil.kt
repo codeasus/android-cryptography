@@ -7,11 +7,8 @@ import android.util.Base64
 import android.util.Log
 import java.io.*
 import java.math.BigInteger
-import java.nio.ByteBuffer
 import java.nio.charset.StandardCharsets
-import java.nio.file.Files
 import java.security.*
-import java.security.cert.X509CRLEntry
 import java.security.cert.X509Certificate
 import java.security.spec.X509EncodedKeySpec
 import javax.crypto.Cipher
@@ -27,7 +24,7 @@ object RSACryptoUtil {
     private const val STRING_ERROR_KEYPAIR = "Encryption/Decryption KeyPair has not been generated"
     private const val STRING_ERROR_DELETE_CERTIFICATE = "Public Key Certificate could not be deleted"
 
-    private val TAG = RSACryptoUtil.javaClass.name
+    private const val TAG = "DBG@Crypto@RSACryptoUtil"
 
     fun generateKeyPair() {
         val keyPairGenerator = KeyPairGenerator.getInstance(KeyProperties.KEY_ALGORITHM_RSA, PROVIDER_ANDROID_KEY_STORE)

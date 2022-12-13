@@ -16,7 +16,7 @@ object AndroidKeyStoreUtil {
 
     private const val STRING_ERROR_SECRET_KEY = "Encryption/Decryption SecretKey has not been generated"
 
-    private val TAG = AndroidKeyStoreUtil::class.java.name
+    private const val TAG = "DBG@Crypto@AndroidKeyStoreUtil"
 
     fun generateSecretKey() {
         val keyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, PROVIDER_ANDROID_KEY_STORE)
