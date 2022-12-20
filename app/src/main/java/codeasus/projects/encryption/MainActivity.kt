@@ -2,14 +2,10 @@ package codeasus.projects.encryption
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Base64
 import android.util.Log
-import codeasus.projects.encryption.crypto.AESCryptoUtil
-import codeasus.projects.encryption.crypto.AndroidKeyStoreUtil
+import codeasus.projects.encryption.crypto.CustomCryptoUtils.toBlockPaddedUTF8ByteArray
+import codeasus.projects.encryption.crypto.CustomCryptoUtils.toUTF8ByteArray
 import codeasus.projects.encryption.crypto.RSACryptoUtil
-import java.io.File
-import java.nio.charset.StandardCharsets
-import java.security.cert.X509Certificate
 
 class MainActivity : AppCompatActivity() {
 
@@ -21,11 +17,20 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        val base64IOSMessage = "Salam"
+        val base64IOSEncryptedMessage = "9szYgaPEgw/lPYStzJCUJw=="
+        val base64IOSSecretKeyAES = "QU9ghA/W4UMbQXslGW26AkEsDR00Sdr3yKcHLJP0+Vc="
+        val base64IOSInitializationVector = "gNRfVR+C8HzZHhA2Ian6Qw=="
+
         RSACryptoUtil.generateKeyPair()
 
+        val d0 = "Hello, can you deliver this number to my friend: 32423"
+        val d2 = "Fire"
+        val d1 = "DreamChaserX0012"
+        Log.d(TAG, "Data: $d1")
+        Log.d(TAG, "Array Data: ${d1.toUTF8ByteArray().contentToString()}")
+        Log.d(TAG, "Block Padded Array Data: ${d1.toBlockPaddedUTF8ByteArray().contentToString()}")
 
-        val data = "This is some secret bs"
-        Log.d(TAG, "Data: $data")
 //        val secretKey = AESCryptoUtil.generateSecretKey()
 //        AndroidKeyStoreUtil.generateSecretKey()
 //        val ivx = byteArrayOf(12, 34, 45, 23, 124, 34, 90, 99, 67, 44, 11, 23);
