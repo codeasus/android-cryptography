@@ -46,7 +46,7 @@ object AndroidKeyStoreUtil {
         val cipher = Cipher.getInstance(ENCRYPTION_MODE_AES_GCM_NO_PADDING)
         cipher.init(Cipher.ENCRYPT_MODE, getSecretKey(), GCMParameterSpec(128, ivBytes))
         val encodedData = data.toByteArray(Charsets.UTF_8)
-        return Base64.encodeToString(cipher.doFinal(encodedData), Base64.DEFAULT)
+        return Base64.encodeToString(cipher.doFinal(encodedData), Base64.NO_WRAP)
     }
 
     fun decrypt(cipherData: ByteArray, ivBytes: ByteArray): ByteArray {

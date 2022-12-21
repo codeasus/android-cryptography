@@ -23,20 +23,20 @@ object AESCryptoUtil {
         val keyGenerator: KeyGenerator = KeyGenerator.getInstance(ALGORITHM_TYPE)
         keyGenerator.init(KEY_SIZE_AES, secureRandom)
         val key = keyGenerator.generateKey()
-        return Base64.encodeToString(key.encoded, Base64.DEFAULT)
+        return Base64.encodeToString(key.encoded, Base64.NO_WRAP)
     }
 
     fun generateInitializationVector(): String {
         val initializationVector = ByteArray(16)
         val secureRandom = SecureRandom()
         secureRandom.nextBytes(initializationVector)
-        return Base64.encodeToString(initializationVector, Base64.DEFAULT)
+        return Base64.encodeToString(initializationVector, Base64.NO_WRAP)
     }
 
     fun encrypt(data: String, sk: String, iv: String): ByteArray {
         val secretKey = base64ToSecretKey(sk)
-        val ivByteArray = Base64.decode(iv, Base64.DEFAULT)
-        val cipher: Cipher = Cipher.getInstance(ENCRYPTION_MODE_AES_CBC_PKCS5_PADDING)
+        val ivByteArray = Base64.decode(iv, Base64.NO_WRAP)
+        val cipher = Cipher.getInstance(ENCRYPTION_MODE_AES_CBC_PKCS5_PADDING)
         val ivParameterSpec = IvParameterSpec(ivByteArray)
         cipher.init(Cipher.ENCRYPT_MODE, secretKey, ivParameterSpec)
         return cipher.doFinal(data.toByteArray(StandardCharsets.UTF_8))
@@ -44,22 +44,20 @@ object AESCryptoUtil {
 
     fun decrypt(cipherData: ByteArray, sk: ByteArray, iv: String): String {
         val secretKey = byteArrayToSecretKey(sk)
-        val ivByteArray = Base64.decode(iv, Base64.DEFAULT)
-        val cipher: Cipher = Cipher.getInstance(ENCRYPTION_MODE_AES_CBC_PKCS5_PADDING)
+        val ivByteArray = Base64.decode(iv, Base64.NO_WRAP)
+        val cipher = Cipher.getInstance(ENCRYPTION_MODE_AES_CBC_PKCS5_PADDING)
         val ivParameterSpec = IvParameterSpec(ivByteArray)
         cipher.init(Cipher.DECRYPT_MODE, secretKey, ivParameterSpec)
         return String(cipher.doFinal(cipherData), StandardCharsets.UTF_8)
     }
 
     private fun byteArrayToSecretKey(secretKey: ByteArray): SecretKey {
-        val input = Base64.decode(secretKey, Base64.DEFAULT)
-        val secretKeySpec = SecretKeySpec(input, 0, input.size, ALGORITHM_TYPE);
-        return secretKeySpec
+        val input = Base64.decode(secretKey, Base64.NO_WRAP)
+        return SecretKeySpec(input, 0, input.size, ALGORITHM_TYPE)
     }
 
     private fun base64ToSecretKey(secretKey: String): SecretKey {
-        val input = Base64.decode(secretKey, Base64.DEFAULT)
-        val secretKeySpec = SecretKeySpec(input, 0, input.size, ALGORITHM_TYPE);
-        return secretKeySpec
+        val input = Base64.decode(secretKey, Base64.NO_WRAP)
+        return SecretKeySpec(input, 0, input.size, ALGORITHM_TYPE)
     }
 }

@@ -7,6 +7,7 @@ import android.util.Log
 import codeasus.projects.encryption.crypto.CustomCryptoUtils.toBlockPaddedUTF8ByteArray
 import codeasus.projects.encryption.crypto.CustomCryptoUtils.toUTF8ByteArray
 import codeasus.projects.encryption.crypto.RSACryptoUtil
+import java.nio.charset.StandardCharsets
 
 class MainActivity : AppCompatActivity() {
 
@@ -19,7 +20,7 @@ class MainActivity : AppCompatActivity() {
         private const val base64IOSSecretKeyAES = "QU9ghA/W4UMbQXslGW26AkEsDR00Sdr3yKcHLJP0+Vc="
         private const val base64IOSInitializationVector = "gNRfVR+C8HzZHhA2Ian6Qw=="
 
-        private const val data0 = "Can you deliver this message: 'əıöğöçş32423🍺🍺🥞🥞😒👌'"
+        private const val data0 = "Deliver this message: 'əıöğöçş32423🍺🍺🥞🥞😒👌'"
         private const val data2 = "Fire"
         private const val data1 = "DreamChaserX0012"
     }
@@ -29,6 +30,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setup()
         //performIOSSecretKeyCryptography()
+        performRSAUTF8MessageCryptography()
     }
 
     private fun setup() {
@@ -47,6 +49,23 @@ class MainActivity : AppCompatActivity() {
             TAG,
             "Decrypted secret key: $strDecryptedSecretKey, areEqual: ${
                 strDecryptedSecretKey == base64IOSSecretKeyAES
+            }"
+        )
+    }
+
+    private fun performRSAUTF8MessageCryptography() {
+        Log.d(TAG, "Message to be encrypted: $data0")
+        val byteArrayMessage = data0.toUTF8ByteArray()
+        val base65BasedByteArrayMessage = Base64.encode(byteArrayMessage, Base64.NO_WRAP)
+        val encryptedMessage = RSACryptoUtil.encrypt(base65BasedByteArrayMessage)
+        Log.d(TAG, "Encrypted message: $encryptedMessage")
+        val byteArrayEncryptedMessage = Base64.decode(encryptedMessage, Base64.NO_WRAP)
+        val decryptedMessage = RSACryptoUtil.decrypt(byteArrayEncryptedMessage)
+        val base64StrDecryptedMessage = Base64.decode(decryptedMessage, Base64.NO_WRAP)
+        val strDecryptedMessage = String(base64StrDecryptedMessage, StandardCharsets.UTF_8)
+        Log.d(
+            TAG, "Decrypted Message: $strDecryptedMessage, areEqual: ${
+                data0 == strDecryptedMessage
             }"
         )
     }

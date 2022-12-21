@@ -98,7 +98,7 @@ object RSACryptoUtil {
         val cipher = Cipher.getInstance(ENCRYPTION_MODE_RSA_ECB_PKCS1_PADDING)
         cipher.init(Cipher.ENCRYPT_MODE, getPublicKey())
         val encryptedMessage = cipher.doFinal(data)
-        return Base64.encodeToString(encryptedMessage, Base64.DEFAULT)
+        return Base64.encodeToString(encryptedMessage, Base64.NO_WRAP)
     }
 
     fun encrypt(data: ByteArray, publicKey: String): String {
@@ -106,7 +106,7 @@ object RSACryptoUtil {
         val cipher = Cipher.getInstance(ENCRYPTION_MODE_RSA_ECB_PKCS1_PADDING)
         cipher.init(Cipher.ENCRYPT_MODE, pk)
         val encryptedMessage = cipher.doFinal(data)
-        return Base64.encodeToString(encryptedMessage, Base64.DEFAULT)
+        return Base64.encodeToString(encryptedMessage, Base64.NO_WRAP)
     }
 
     fun decrypt(cipherData: ByteArray): ByteArray {
@@ -124,10 +124,10 @@ object RSACryptoUtil {
     private fun base64ToPublicKey(base64Input: String): PublicKey {
         return KeyFactory
             .getInstance(ALGORITHM_TYPE)
-            .generatePublic(X509EncodedKeySpec(Base64.decode(base64Input, Base64.DEFAULT)))
+            .generatePublic(X509EncodedKeySpec(Base64.decode(base64Input, Base64.NO_WRAP)))
     }
 
     fun keyToBase64(key: Key): String {
-        return Base64.encodeToString(key.encoded, Base64.DEFAULT)
+        return Base64.encodeToString(key.encoded, Base64.NO_WRAP)
     }
 }
