@@ -24,12 +24,18 @@ object RSACryptoUtil {
     private const val STRING_ERROR_KEYPAIR = "Encryption/Decryption KeyPair has not been generated"
     private const val STRING_ERROR_DELETE_CERTIFICATE = "Public Key Certificate could not be deleted"
 
-    private const val TAG = "DBG@Crypto@RSACryptoUtil"
+    private const val TAG = "DBG@RSACryptoUtil"
 
     fun generateKeyPair() {
-        val keyPairGenerator = KeyPairGenerator.getInstance(KeyProperties.KEY_ALGORITHM_RSA, PROVIDER_ANDROID_KEY_STORE)
+        val keyPairGenerator = KeyPairGenerator.getInstance(
+            KeyProperties.KEY_ALGORITHM_RSA,
+            PROVIDER_ANDROID_KEY_STORE
+        )
         val keyGenParameterSpec = KeyGenParameterSpec
-            .Builder(KEYSTORE_ALIAS_RSA, KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT)
+            .Builder(
+                KEYSTORE_ALIAS_RSA,
+                KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT
+            )
             .setKeySize(2048)
             .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_RSA_PKCS1)
             .setCertificateSerialNumber(BigInteger.ONE)
@@ -52,14 +58,15 @@ object RSACryptoUtil {
 
     fun generatePubKeyCertificate(context: Context) {
         val keyStore = getKeyStoreInstance()
+        val fos = context.openFileOutput(FILE_RSA_PUBLIC_KEY, Context.MODE_APPEND)
         if (keyStore.containsAlias(KEYSTORE_ALIAS_RSA)) {
             val pk: PublicKey = getPublicKey()
             try {
-                val fos = context.openFileOutput(FILE_RSA_PUBLIC_KEY, Context.MODE_APPEND)
                 fos.write(pk.encoded)
-                fos.close()
             } catch (e: IOException) {
                 e.message?.let { Log.d(TAG, it) }
+            } finally {
+                fos.close()
             }
         }
         throw RuntimeException(STRING_ERROR_KEYPAIR)
@@ -79,7 +86,7 @@ object RSACryptoUtil {
         throw RuntimeException(STRING_ERROR_KEYPAIR)
     }
 
-    fun getPublicKey(): PublicKey {
+    private fun getPublicKey(): PublicKey {
         return getKeyPair().public
     }
 
@@ -87,18 +94,18 @@ object RSACryptoUtil {
         return getKeyPair().private
     }
 
-    fun encrypt(data: String): String {
+    fun encrypt(data: ByteArray): String {
         val cipher = Cipher.getInstance(ENCRYPTION_MODE_RSA_ECB_PKCS1_PADDING)
         cipher.init(Cipher.ENCRYPT_MODE, getPublicKey())
-        val encryptedMessage = cipher.doFinal(data.toByteArray(StandardCharsets.UTF_8))
+        val encryptedMessage = cipher.doFinal(data)
         return Base64.encodeToString(encryptedMessage, Base64.DEFAULT)
     }
 
-    fun encrypt(data: String, publicKey: String): String {
+    fun encrypt(data: ByteArray, publicKey: String): String {
         val pk = base64ToPublicKey(publicKey)
         val cipher = Cipher.getInstance(ENCRYPTION_MODE_RSA_ECB_PKCS1_PADDING)
         cipher.init(Cipher.ENCRYPT_MODE, pk)
-        val encryptedMessage = cipher.doFinal(data.toByteArray(StandardCharsets.UTF_8))
+        val encryptedMessage = cipher.doFinal(data)
         return Base64.encodeToString(encryptedMessage, Base64.DEFAULT)
     }
 

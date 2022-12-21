@@ -15,7 +15,7 @@ object AESCryptoUtil {
     private const val ENCRYPTION_MODE_AES_CBC_PKCS5_PADDING = "AES/CBC/PKCS5Padding"
     private const val KEY_SIZE_AES = 256
 
-    private const val TAG = "DBG@Crypto@AESCryptoUtil"
+    private const val TAG = "DBG@AESCryptoUtil"
 
     @Throws(NoSuchAlgorithmException::class)
     fun generateSecretKey(): String {

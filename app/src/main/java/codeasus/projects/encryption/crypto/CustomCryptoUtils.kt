@@ -18,7 +18,7 @@ object CustomCryptoUtils {
             inputArray
         } else {
             val maxBlockSize = (inputArraySize / BLOCK_LENGTH) + 1
-            val resultArray = inputArray.copyOf(maxBlockSize * 16)
+            val resultArray = inputArray.copyOf(maxBlockSize * BLOCK_LENGTH)
             resultArray.fill(PADDING_ELEMENT, inputArraySize, resultArray.size)
             resultArray
         }
