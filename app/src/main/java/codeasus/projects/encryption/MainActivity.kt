@@ -6,6 +6,7 @@ import android.util.Base64
 import android.util.Log
 import codeasus.projects.encryption.crypto.CustomCryptoUtils.toBlockPaddedUTF8ByteArray
 import codeasus.projects.encryption.crypto.CustomCryptoUtils.toUTF8ByteArray
+import codeasus.projects.encryption.crypto.IOSSpecificAESCryptoUtil
 import codeasus.projects.encryption.crypto.RSACryptoUtil
 import java.nio.charset.StandardCharsets
 
@@ -14,15 +15,15 @@ class MainActivity : AppCompatActivity() {
     companion object {
         private const val TAG = "DBG@MainActivity"
 
-        private const val strIOSMessage = "Salam"
+        private const val strIOSMessage = "salam"
 
         private const val base64IOSEncryptedMessage = "9szYgaPEgw/lPYStzJCUJw=="
         private const val base64IOSSecretKeyAES = "QU9ghA/W4UMbQXslGW26AkEsDR00Sdr3yKcHLJP0+Vc="
         private const val base64IOSInitializationVector = "gNRfVR+C8HzZHhA2Ian6Qw=="
 
         private const val data0 = "Deliver this message: 'əıöğöçş32423🍺🍺🥞🥞😒👌'"
-        private const val data2 = "Fire"
         private const val data1 = "DreamChaserX0012"
+        private const val data2 = "Fire"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,11 +31,31 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setup()
         //performIOSSecretKeyCryptography()
-        performRSAUTF8MessageCryptography()
+        //performRSAUTF8MessageCryptography()
+        performCryptographyWithIOSKeyAndIV(strIOSMessage)
     }
 
     private fun setup() {
         RSACryptoUtil.generateKeyPair()
+    }
+
+    private fun performCryptographyWithIOSKeyAndIV(messageUTF8: String) {
+        IOSSpecificAESCryptoUtil.init(base64IOSSecretKeyAES, base64IOSInitializationVector)
+        Log.d(TAG, "Message to be encrypted with IOS Key: $messageUTF8")
+        val byteArrayMessage = messageUTF8.toUTF8ByteArray()
+        val base64BasedByteArrayMessage = Base64.encode(byteArrayMessage, Base64.NO_WRAP)
+        val encryptedMessage = IOSSpecificAESCryptoUtil.encrypt(base64BasedByteArrayMessage)
+        Log.d(TAG, "IOS Key encrypted message: $encryptedMessage")
+        val byteArrayDecryptedMessage = Base64.decode(encryptedMessage, Base64.NO_WRAP)
+        val decryptedByteArrayMessage = IOSSpecificAESCryptoUtil.decrypt(byteArrayDecryptedMessage)
+        val decryptedDecodedMessage = Base64.decode(decryptedByteArrayMessage, Base64.NO_WRAP)
+        val strDecryptedMessage = String(decryptedDecodedMessage, StandardCharsets.UTF_8)
+        Log.d(
+            TAG,
+            "IOS Key decrypted message: $strDecryptedMessage, areEqual: ${
+                messageUTF8 == strDecryptedMessage
+            }"
+        )
     }
 
     private fun performIOSSecretKeyCryptography() {
@@ -48,7 +69,7 @@ class MainActivity : AppCompatActivity() {
         Log.d(
             TAG,
             "Decrypted secret key: $strDecryptedSecretKey, areEqual: ${
-                strDecryptedSecretKey == base64IOSSecretKeyAES
+                base64IOSSecretKeyAES == strDecryptedSecretKey
             }"
         )
     }
@@ -56,8 +77,8 @@ class MainActivity : AppCompatActivity() {
     private fun performRSAUTF8MessageCryptography() {
         Log.d(TAG, "Message to be encrypted: $data0")
         val byteArrayMessage = data0.toUTF8ByteArray()
-        val base65BasedByteArrayMessage = Base64.encode(byteArrayMessage, Base64.NO_WRAP)
-        val encryptedMessage = RSACryptoUtil.encrypt(base65BasedByteArrayMessage)
+        val base64BasedByteArrayMessage = Base64.encode(byteArrayMessage, Base64.NO_WRAP)
+        val encryptedMessage = RSACryptoUtil.encrypt(base64BasedByteArrayMessage)
         Log.d(TAG, "Encrypted message: $encryptedMessage")
         val byteArrayEncryptedMessage = Base64.decode(encryptedMessage, Base64.NO_WRAP)
         val decryptedMessage = RSACryptoUtil.decrypt(byteArrayEncryptedMessage)

@@ -15,7 +15,8 @@ object IOSSpecificAESCryptoUtil {
     private lateinit var ivParameterSpec: IvParameterSpec
 
     fun init(base64SecretKey: String, base64IV: String) {
-
+        base64ToSecretKey(base64SecretKey)
+        base64ToIVParameterSpec(base64IV)
     }
 
     private fun base64ToSecretKey(base64SecretKey: String) {
@@ -34,13 +35,15 @@ object IOSSpecificAESCryptoUtil {
         return ivParameterSpec
     }
 
-//    fun encrypt(data: ByteArray): String {
-//        val cipher = Cipher.getInstance(ENCRYPTION_MODE_AES_CBC_PKCS5_PADDING)
-//        cipher.init(Cipher.ENCRYPT_MODE, secretKey, ivParameterSpec)
-//        return
-//    }
-//
-//    fun decrypt(): String{
-//
-//    }
+    fun encrypt(data: ByteArray): String {
+        val cipher = Cipher.getInstance(ENCRYPTION_MODE_AES_CBC_PKCS5_PADDING)
+        cipher.init(Cipher.ENCRYPT_MODE, secretKey, ivParameterSpec)
+        return Base64.encodeToString(cipher.doFinal(data), Base64.NO_WRAP)
+    }
+
+    fun decrypt(data: ByteArray): ByteArray {
+        val cipher = Cipher.getInstance(ENCRYPTION_MODE_AES_CBC_PKCS5_PADDING)
+        cipher.init(Cipher.DECRYPT_MODE, secretKey, ivParameterSpec)
+        return cipher.doFinal(data)
+    }
 }
