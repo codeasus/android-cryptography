@@ -14,50 +14,84 @@ object AESCryptoUtil {
     private const val ALGORITHM_TYPE = "AES"
     private const val ENCRYPTION_MODE_AES_CBC_PKCS5_PADDING = "AES/CBC/PKCS5Padding"
     private const val KEY_SIZE_AES = 256
+    private const val IV_BYTE_ARRAY_LENGTH = 16
 
-    private const val TAG = "DBG@AESCryptoUtil"
+    private const val TAG = "DBG@CRYPTO -> AESCryptoUtil"
 
-    @Throws(NoSuchAlgorithmException::class)
-    fun generateSecretKey(): String {
-        val secureRandom = SecureRandom()
-        val keyGenerator: KeyGenerator = KeyGenerator.getInstance(ALGORITHM_TYPE)
-        keyGenerator.init(KEY_SIZE_AES, secureRandom)
-        val key = keyGenerator.generateKey()
-        return Base64.encodeToString(key.encoded, Base64.NO_WRAP)
+    // b64, B64 -> base64, Base64
+
+    fun getSKAndIVPair(): Pair<SecretKey, IvParameterSpec> {
+        return Pair(generateSK(), generateIV())
     }
 
-    fun generateInitializationVector(): String {
-        val initializationVector = ByteArray(16)
-        val secureRandom = SecureRandom()
-        secureRandom.nextBytes(initializationVector)
-        return Base64.encodeToString(initializationVector, Base64.NO_WRAP)
+    private fun generateSK(): SecretKey {
+        val kG = KeyGenerator.getInstance(ALGORITHM_TYPE)
+        kG.init(KEY_SIZE_AES, SecureRandom())
+        return kG.generateKey()
     }
 
-    fun encrypt(data: String, sk: String, iv: String): ByteArray {
-        val secretKey = base64ToSecretKey(sk)
-        val ivByteArray = Base64.decode(iv, Base64.NO_WRAP)
+    private fun generateIV(): IvParameterSpec {
+        val iV = ByteArray(IV_BYTE_ARRAY_LENGTH)
+        SecureRandom().nextBytes(iV)
+        return IvParameterSpec(iV)
+    }
+
+    fun encrypt(data: ByteArray, sk: SecretKey, iv: IvParameterSpec): ByteArray {
         val cipher = Cipher.getInstance(ENCRYPTION_MODE_AES_CBC_PKCS5_PADDING)
-        val ivParameterSpec = IvParameterSpec(ivByteArray)
-        cipher.init(Cipher.ENCRYPT_MODE, secretKey, ivParameterSpec)
-        return cipher.doFinal(data.toByteArray(StandardCharsets.UTF_8))
+        val b64EncodedSk = Base64.encodeToString(sk.encoded, Base64.NO_WRAP)
+        val b64EncodedIV = Base64.encodeToString(iv.iv, Base64.NO_WRAP)
+        Timber.d("$TAG: SECRET_KEY: $b64EncodedSk; IV: $b64EncodedIV;")
+        cipher.init(Cipher.ENCRYPT_MODE, sk, iv)
+        return cipher.doFinal(data)
     }
 
-    fun decrypt(cipherData: ByteArray, sk: ByteArray, iv: String): String {
-        val secretKey = byteArrayToSecretKey(sk)
-        val ivByteArray = Base64.decode(iv, Base64.NO_WRAP)
+    fun decrypt(data: ByteArray, sK: SecretKey, iV: IvParameterSpec): ByteArray {
         val cipher = Cipher.getInstance(ENCRYPTION_MODE_AES_CBC_PKCS5_PADDING)
-        val ivParameterSpec = IvParameterSpec(ivByteArray)
-        cipher.init(Cipher.DECRYPT_MODE, secretKey, ivParameterSpec)
-        return String(cipher.doFinal(cipherData), StandardCharsets.UTF_8)
+        cipher.init(Cipher.DECRYPT_MODE, sK, iV)
+        return cipher.doFinal(data)
     }
 
-    private fun byteArrayToSecretKey(secretKey: ByteArray): SecretKey {
-        val input = Base64.decode(secretKey, Base64.NO_WRAP)
-        return SecretKeySpec(input, 0, input.size, ALGORITHM_TYPE)
+    fun b64EncodedStrToSK(b64EncodedSK: String): SecretKey {
+        val decodedByteArraySK = Base64.decode(b64EncodedSK, Base64.NO_WRAP)
+        return SecretKeySpec(decodedByteArraySK, 0, decodedByteArraySK.size, ALGORITHM_TYPE)
     }
 
-    private fun base64ToSecretKey(secretKey: String): SecretKey {
-        val input = Base64.decode(secretKey, Base64.NO_WRAP)
-        return SecretKeySpec(input, 0, input.size, ALGORITHM_TYPE)
+    fun b64EncodedStrToIV(b64EncodedIV: String): IvParameterSpec {
+        val decodedByteArrayIV = Base64.decode(b64EncodedIV, Base64.NO_WRAP)
+        return IvParameterSpec(decodedByteArrayIV)
+    }
+
+    fun b64EncodedByteArrayToSK(b64EncodedSK: ByteArray): SecretKey {
+        return SecretKeySpec(b64EncodedSK, 0, b64EncodedSK.size, ALGORITHM_TYPE)
+    }
+
+    fun b64EncodedByteArrayToIV(b64EncodedIV: ByteArray): IvParameterSpec {
+        return IvParameterSpec(b64EncodedIV)
+    }
+
+    // Convert SecretKey to Base64 String for persistence & communication
+    fun sKToB64EncodedStr(sK: SecretKey): String {
+        return Base64.encodeToString(sK.encoded, Base64.NO_WRAP)
+    }
+
+    // Convert Initialization Vector to Base64 String for persistence & communication
+    fun ivToB64EncodedStr(iV: IvParameterSpec): String {
+        return Base64.encodeToString(iV.iv, Base64.NO_WRAP)
+    }
+
+    fun b64EncodedStrSKToByteArray(b64EncodedSK: String): ByteArray {
+        return Base64.decode(b64EncodedSK, Base64.NO_WRAP)
+    }
+
+    fun b64EncodedStrIVToByteArray(b64EncodedIV: String): ByteArray {
+        return Base64.decode(b64EncodedIV, Base64.NO_WRAP)
+    }
+
+    fun utf8StrToByteArray(utf8Data: String): ByteArray {
+        return utf8Data.toByteArray(StandardCharsets.UTF_8)
+    }
+
+    fun byteArrayToUTF8Str(byteArrayData: ByteArray): String {
+        return String(byteArrayData, StandardCharsets.UTF_8)
     }
 }

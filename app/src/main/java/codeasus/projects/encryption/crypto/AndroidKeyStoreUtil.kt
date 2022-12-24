@@ -16,7 +16,7 @@ object AndroidKeyStoreUtil {
 
     private const val STRING_ERROR_SECRET_KEY = "Encryption/Decryption SecretKey has not been generated"
 
-    private const val TAG = "DBG@AndroidKeyStoreUtil"
+    private const val TAG = "DBG@CRYPTO -> AndroidKeyStoreUtil"
 
     fun generateSecretKey() {
         val keyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, PROVIDER_ANDROID_KEY_STORE)
@@ -46,7 +46,7 @@ object AndroidKeyStoreUtil {
         val cipher = Cipher.getInstance(ENCRYPTION_MODE_AES_GCM_NO_PADDING)
         cipher.init(Cipher.ENCRYPT_MODE, getSecretKey(), GCMParameterSpec(128, ivBytes))
         val encodedData = data.toByteArray(Charsets.UTF_8)
-        return Base64.encodeToString(cipher.doFinal(encodedData), Base64.NO_WRAP)
+        return Base64.encodeToString(cipher.doFinal(encodedData), Base64.DEFAULT)
     }
 
     fun decrypt(cipherData: ByteArray, ivBytes: ByteArray): ByteArray {

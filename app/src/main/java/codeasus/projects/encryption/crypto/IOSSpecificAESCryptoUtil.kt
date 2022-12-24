@@ -35,10 +35,10 @@ object IOSSpecificAESCryptoUtil {
         return ivParameterSpec
     }
 
-    fun encrypt(data: ByteArray): String {
+    fun encrypt(data: ByteArray): ByteArray {
         val cipher = Cipher.getInstance(ENCRYPTION_MODE_AES_CBC_PKCS5_PADDING)
         cipher.init(Cipher.ENCRYPT_MODE, secretKey, ivParameterSpec)
-        return Base64.encodeToString(cipher.doFinal(data), Base64.NO_WRAP)
+        return cipher.doFinal(data)
     }
 
     fun decrypt(data: ByteArray): ByteArray {
