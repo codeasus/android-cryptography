@@ -1,13 +1,15 @@
 package codeasus.projects.encryption.crypto
 
 import android.content.Context
+import android.os.Build.VERSION
+import android.os.Build.VERSION_CODES
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import android.util.Base64
 import android.util.Log
-import java.io.*
+import java.io.FileOutputStream
+import java.io.IOException
 import java.math.BigInteger
-import java.nio.charset.StandardCharsets
 import java.security.*
 import java.security.cert.X509Certificate
 import java.security.interfaces.RSAPublicKey
@@ -32,24 +34,26 @@ object RSACryptoUtil {
     // b64, B64 -> base64, Base64
 
     fun generateKeyPair() {
-        val kPG = KeyPairGenerator.getInstance(
-            KeyProperties.KEY_ALGORITHM_RSA,
-            PROVIDER_ANDROID_KEY_STORE
-        )
-        val kGPS = KeyGenParameterSpec
-            .Builder(
-                KEYSTORE_ALIAS_RSA,
-                KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT
+        if (VERSION.SDK_INT >= VERSION_CODES.M) {
+            val kPG = KeyPairGenerator.getInstance(
+                KeyProperties.KEY_ALGORITHM_RSA,
+                PROVIDER_ANDROID_KEY_STORE
             )
-            .setKeySize(2048)
-            .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_RSA_PKCS1)
-            .setCertificateSerialNumber(BigInteger.ONE)
-            .setDigests(KeyProperties.DIGEST_SHA256)
-            .setSignaturePaddings(KeyProperties.SIGNATURE_PADDING_RSA_PKCS1)
-            .build()
+            val kGPS = KeyGenParameterSpec
+                .Builder(
+                    KEYSTORE_ALIAS_RSA,
+                    KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT
+                )
+                .setKeySize(2048)
+                .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_RSA_PKCS1)
+                .setCertificateSerialNumber(BigInteger.ONE)
+                .setDigests(KeyProperties.DIGEST_SHA256)
+                .setSignaturePaddings(KeyProperties.SIGNATURE_PADDING_RSA_PKCS1)
+                .build()
 
-        kPG.initialize(kGPS)
-        kPG.generateKeyPair()
+            kPG.initialize(kGPS)
+            kPG.generateKeyPair()
+        }
     }
 
     private fun getKeyPair(): KeyPair {

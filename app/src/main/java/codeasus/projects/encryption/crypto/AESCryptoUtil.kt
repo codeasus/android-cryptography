@@ -1,8 +1,8 @@
 package codeasus.projects.encryption.crypto
 
 import android.util.Base64
+import android.util.Log
 import java.nio.charset.StandardCharsets
-import java.security.NoSuchAlgorithmException
 import java.security.SecureRandom
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
@@ -16,7 +16,7 @@ object AESCryptoUtil {
     private const val KEY_SIZE_AES = 256
     private const val IV_BYTE_ARRAY_LENGTH = 16
 
-    private const val TAG = "DBG@CRYPTO -> AESCryptoUtil"
+    private const val TAG = "DBG@CRYPTO -> AES"
 
     // b64, B64 -> base64, Base64
 
@@ -40,7 +40,7 @@ object AESCryptoUtil {
         val cipher = Cipher.getInstance(ENCRYPTION_MODE_AES_CBC_PKCS5_PADDING)
         val b64EncodedSk = Base64.encodeToString(sk.encoded, Base64.NO_WRAP)
         val b64EncodedIV = Base64.encodeToString(iv.iv, Base64.NO_WRAP)
-        Timber.d("$TAG: SECRET_KEY: $b64EncodedSk; IV: $b64EncodedIV;")
+        Log.d(TAG, "SECRET_KEY: $b64EncodedSk; IV: $b64EncodedIV;")
         cipher.init(Cipher.ENCRYPT_MODE, sk, iv)
         return cipher.doFinal(data)
     }

@@ -9,7 +9,6 @@ import javax.crypto.spec.SecretKeySpec
 object IOSSpecificAESCryptoUtil {
     private const val ALGORITHM_TYPE = "AES"
     private const val ENCRYPTION_MODE_AES_CBC_PKCS5_PADDING = "AES/CBC/PKCS5Padding"
-    private const val KEY_SIZE_AES = 256
 
     private lateinit var secretKey: SecretKey
     private lateinit var ivParameterSpec: IvParameterSpec
