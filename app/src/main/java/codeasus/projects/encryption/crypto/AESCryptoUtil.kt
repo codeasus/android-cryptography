@@ -86,12 +86,4 @@ object AESCryptoUtil {
     fun b64EncodedStrIVToByteArray(b64EncodedIV: String): ByteArray {
         return Base64.decode(b64EncodedIV, Base64.NO_WRAP)
     }
-
-    fun utf8StrToByteArray(utf8Data: String): ByteArray {
-        return utf8Data.toByteArray(StandardCharsets.UTF_8)
-    }
-
-    fun byteArrayToUTF8Str(byteArrayData: ByteArray): String {
-        return String(byteArrayData, StandardCharsets.UTF_8)
-    }
 }
