@@ -46,9 +46,9 @@ object RSACryptoUtil {
                 )
                 .setKeySize(2048)
                 .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_RSA_PKCS1)
-                .setCertificateSerialNumber(BigInteger.ONE)
-                .setDigests(KeyProperties.DIGEST_SHA256)
-                .setSignaturePaddings(KeyProperties.SIGNATURE_PADDING_RSA_PKCS1)
+//                .setCertificateSerialNumber(BigInteger.ONE)
+//                .setDigests(KeyProperties.DIGEST_SHA256)
+//                .setSignaturePaddings(KeyProperties.SIGNATURE_PADDING_RSA_PKCS1)
                 .build()
 
             kPG.initialize(kGPS)
