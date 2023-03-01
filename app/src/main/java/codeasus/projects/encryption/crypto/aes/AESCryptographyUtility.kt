@@ -1,8 +1,6 @@
-package codeasus.projects.encryption.crypto
+package codeasus.projects.encryption.crypto.aes
 
 import android.util.Base64
-import android.util.Log
-import java.nio.charset.StandardCharsets
 import java.security.SecureRandom
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
@@ -10,13 +8,14 @@ import javax.crypto.SecretKey
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
 
-object AESCryptoUtil {
+object AESCryptographyUtility {
     private const val ALGORITHM_TYPE = "AES"
-    private const val ENCRYPTION_MODE_AES_CBC_PKCS5_PADDING = "AES/CBC/PKCS5Padding"
+    private const val ENCRYPTION_MODE = "AES/CBC/PKCS5Padding"
     private const val KEY_SIZE_AES = 256
     private const val IV_BYTE_ARRAY_LENGTH = 16
 
-    private const val TAG = "DBG@CRYPTO -> AES"
+    @Suppress("unused")
+    private const val TAG = "DBG@AESCryptoUtil"
 
     // b64, B64 -> base64, Base64
 
@@ -37,16 +36,13 @@ object AESCryptoUtil {
     }
 
     fun encrypt(data: ByteArray, sk: SecretKey, iv: IvParameterSpec): ByteArray {
-        val cipher = Cipher.getInstance(ENCRYPTION_MODE_AES_CBC_PKCS5_PADDING)
-        val b64EncodedSk = Base64.encodeToString(sk.encoded, Base64.NO_WRAP)
-        val b64EncodedIV = Base64.encodeToString(iv.iv, Base64.NO_WRAP)
-        Log.d(TAG, "SECRET_KEY: $b64EncodedSk; IV: $b64EncodedIV;")
+        val cipher = Cipher.getInstance(ENCRYPTION_MODE)
         cipher.init(Cipher.ENCRYPT_MODE, sk, iv)
         return cipher.doFinal(data)
     }
 
     fun decrypt(data: ByteArray, sK: SecretKey, iV: IvParameterSpec): ByteArray {
-        val cipher = Cipher.getInstance(ENCRYPTION_MODE_AES_CBC_PKCS5_PADDING)
+        val cipher = Cipher.getInstance(ENCRYPTION_MODE)
         cipher.init(Cipher.DECRYPT_MODE, sK, iV)
         return cipher.doFinal(data)
     }
@@ -77,13 +73,5 @@ object AESCryptoUtil {
     // Convert Initialization Vector to Base64 String for persistence & communication
     fun ivToB64EncodedStr(iV: IvParameterSpec): String {
         return Base64.encodeToString(iV.iv, Base64.NO_WRAP)
-    }
-
-    fun b64EncodedStrSKToByteArray(b64EncodedSK: String): ByteArray {
-        return Base64.decode(b64EncodedSK, Base64.NO_WRAP)
-    }
-
-    fun b64EncodedStrIVToByteArray(b64EncodedIV: String): ByteArray {
-        return Base64.decode(b64EncodedIV, Base64.NO_WRAP)
     }
 }

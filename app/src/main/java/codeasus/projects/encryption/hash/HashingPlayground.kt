@@ -18,7 +18,6 @@ fun main() {
     print((0b1 shr 4).and(0xF))
 }
 
-
 private fun Int.positiveIntToBinary(): String {
     if (this < 0) throw  NegativeNumberException()
     val res = CharArray(CONSTANTS.INT_BINARY_SIZE) { '0' }

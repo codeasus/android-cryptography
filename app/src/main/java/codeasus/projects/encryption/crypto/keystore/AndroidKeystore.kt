@@ -1,4 +1,4 @@
-package codeasus.projects.encryption.crypto
+package codeasus.projects.encryption.crypto.keystore
 
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
@@ -11,28 +11,21 @@ import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
 import javax.crypto.spec.GCMParameterSpec
 
-object AndroidKeyStoreUtil {
+object AndroidKeystore {
     private const val PROVIDER_ANDROID_KEY_STORE = "AndroidKeyStore"
     private const val ENCRYPTION_MODE_AES_GCM_NO_PADDING = "AES/GCM/NoPadding"
     private const val KEYSTORE_ALIAS_AES = "EnigmaApp_AESKeyAlias"
 
-    private const val STRING_ERROR_SECRET_KEY =
-        "Encryption/Decryption SecretKey has not been generated"
+    private const val STRING_ERROR_SECRET_KEY = "Encryption/Decryption SecretKey has not been generated"
 
     @Suppress("unused")
-    private const val TAG = "DBG@CRYPTO -> AKS"
+    private const val TAG = "DBG@CRYPTO -> AndroidKeyStoreUtil"
 
     fun generateSecretKey() {
         if (VERSION.SDK_INT >= VERSION_CODES.M) {
-            val keyGenerator = KeyGenerator.getInstance(
-                KeyProperties.KEY_ALGORITHM_AES,
-                PROVIDER_ANDROID_KEY_STORE
-            )
+            val keyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, PROVIDER_ANDROID_KEY_STORE)
             val keyGenParameterSpec = KeyGenParameterSpec
-                .Builder(
-                    KEYSTORE_ALIAS_AES,
-                    KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT
-                )
+                .Builder(KEYSTORE_ALIAS_AES, KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT)
                 .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
                 .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
                 .setRandomizedEncryptionRequired(false)
@@ -48,8 +41,7 @@ object AndroidKeyStoreUtil {
             load(null)
         }
         if (keyStore.containsAlias(KEYSTORE_ALIAS_AES)) {
-            val secretKeyEntry =
-                keyStore.getEntry(KEYSTORE_ALIAS_AES, null) as KeyStore.SecretKeyEntry
+            val secretKeyEntry = keyStore.getEntry(KEYSTORE_ALIAS_AES, null) as KeyStore.SecretKeyEntry
             return secretKeyEntry.secretKey
         }
         throw RuntimeException(STRING_ERROR_SECRET_KEY)
