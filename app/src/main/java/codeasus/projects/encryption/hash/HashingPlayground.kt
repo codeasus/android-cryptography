@@ -1,5 +1,7 @@
 package codeasus.projects.encryption.hash
 
+import codeasus.projects.encryption.multiplatform.MultiplatformSampleTests
+
 object CONSTANTS {
     const val INT_BINARY_SIZE = 32
 }
