@@ -119,7 +119,7 @@ object RSACryptographyUtility {
         }
     }
 
-    fun b64EncodedStrToPKForIOS(b64EncodedPK: String): PublicKey {
+    fun iOSB64EncodedStrPKToPK(b64EncodedPK: String): PublicKey {
         val decodedByteArrayPK = Base64.decode(b64EncodedPK, Base64.NO_WRAP)
         val pkcs1PublicKey = org.bouncycastle.asn1.pkcs.RSAPublicKey.getInstance(decodedByteArrayPK)
         val modulus = pkcs1PublicKey.modulus
@@ -128,13 +128,13 @@ object RSACryptographyUtility {
         return KeyFactory.getInstance(ALGORITHM_TYPE).generatePublic(ks) as RSAPublicKey
     }
 
-    fun b64EncodedStrToPKForANDROID(b64EncodedPK: String): PublicKey {
+    fun androidB64EncodedStrPKToPK(b64EncodedPK: String): PublicKey {
         return KeyFactory
             .getInstance(ALGORITHM_TYPE)
             .generatePublic(X509EncodedKeySpec(Base64.decode(b64EncodedPK, Base64.NO_WRAP)))
     }
 
-    fun pKToB64EncodedStr(pK: PublicKey): String {
+    private fun pKToB64EncodedStr(pK: PublicKey): String {
         return Base64.encodeToString(pK.encoded, Base64.NO_WRAP)
     }
 }

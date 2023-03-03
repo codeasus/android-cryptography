@@ -42,7 +42,7 @@ object MultiplatformSampleTests {
         val pair = AESCryptographyUtility.getSKAndIVPair()
         val encryptedData = AESCryptographyUtility.encrypt(data.toByteArray(StandardCharsets.UTF_8), pair.first, pair.second)
         val b64EncodedEncryptedData = Base64.encodeToString(encryptedData, Base64.NO_WRAP)
-        val pK = RSACryptographyUtility.b64EncodedStrToPKForIOS(iosPK)
+        val pK = RSACryptographyUtility.iOSB64EncodedStrPKToPK(iosPK)
         val encryptedSK = RSACryptographyUtility.encrypt(pair.first.encoded, pK)
         val encryptedIV = RSACryptographyUtility.encrypt(pair.second.iv, pK)
         val b64EncodedEncryptedSK = Base64.encodeToString(encryptedSK, Base64.NO_WRAP)
