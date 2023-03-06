@@ -14,6 +14,7 @@ import javax.crypto.spec.SecretKeySpec
 object ECDHGround {
 
     private var iv = SecureRandom().generateSeed(16)
+
     fun generateECKeys(): KeyPair? {
         val ecGenParameterSpec = ECGenParameterSpec("secp256r1")
         val keyPairGenerator = KeyPairGenerator.getInstance("EC")
@@ -33,19 +34,28 @@ object ECDHGround {
         }
     }
 
-    fun iosB64EncodedStrPKToPK(iOSB64EncodedPK: String): PublicKey {
-        val decodedPK = Base64.decode(iOSB64EncodedPK, Base64.NO_WRAP)
+    fun androidB64EncodedStrPKtoPK(androidB64EncodedPK: String): PublicKey {
+        
+    }
+
+    fun iosB64EncodedStrPKToPK(iosB64EncodedPK: String): PublicKey {
+        // Bc,bC  -> BouncyCastle
+        // EC  -> Elliptic Curve
+        // p,P -> Point
+        // j,J -> Java (Standard Java Version)
+        // x,y -> EC point coordinates
+        val decodedPK = Base64.decode(iosB64EncodedPK, Base64.NO_WRAP)
         val x9ECParamSpec = SECNamedCurves.getByName("secp256r1")
         val curve = x9ECParamSpec.curve
-        val point = curve.decodePoint(decodedPK)
-        val xBcEC = point.affineXCoord.toBigInteger()
-        val yBcEC = point.affineYCoord.toBigInteger()
+        val bCECPoint = curve.decodePoint(decodedPK)
+        val affineXOnBCEC = bCECPoint.affineXCoord.toBigInteger()
+        val affineYOnBCEC = bCECPoint.affineYCoord.toBigInteger()
         val gBcEC = x9ECParamSpec.g
         val xGBcEC = gBcEC.affineXCoord.toBigInteger()
         val yGBcEC = gBcEC.affineYCoord.toBigInteger()
         val hBcEC = x9ECParamSpec.h.toInt()
         val nBcEC = x9ECParamSpec.n
-        val jPEC = ECPoint(xBcEC, yBcEC)
+        val jPEC = ECPoint(affineXOnBCEC, affineYOnBCEC)
         val gJpEC = ECPoint(xGBcEC, yGBcEC)
         val jEllipticCurve = convertECCurveToEllipticCurve(curve, gJpEC, nBcEC, hBcEC)
         val eCParameterSpec = ECParameterSpec(jEllipticCurve, gJpEC, nBcEC, hBcEC)
