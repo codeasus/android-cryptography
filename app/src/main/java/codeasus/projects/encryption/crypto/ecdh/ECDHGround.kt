@@ -15,27 +15,23 @@ object ECDHGround {
 
     private var iv = SecureRandom().generateSeed(16)
 
-    fun generateECKeys(): KeyPair? {
+    fun generateECKeys(): KeyPair {
         val ecGenParameterSpec = ECGenParameterSpec("secp256r1")
         val keyPairGenerator = KeyPairGenerator.getInstance("EC")
         keyPairGenerator.initialize(ecGenParameterSpec)
         return keyPairGenerator.generateKeyPair()
     }
 
-    fun generateSharedSecret(privateKey: PrivateKey?, publicKey: PublicKey?): SecretKey? {
-        return try {
-            val keyAgreement = KeyAgreement.getInstance("ECDH")
-            keyAgreement.init(privateKey)
-            keyAgreement.doPhase(publicKey, true)
-            keyAgreement.generateSecret("AES")
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
-        }
+    fun generateSharedSecret(privateKey: PrivateKey?, publicKey: PublicKey?): SecretKey {
+        val keyAgreement = KeyAgreement.getInstance("ECDH")
+        keyAgreement.init(privateKey)
+        keyAgreement.doPhase(publicKey, true)
+        return keyAgreement.generateSecret("AES")
     }
 
     fun androidB64EncodedStrPKtoPK(androidB64EncodedPK: String): PublicKey {
-        
+        return KeyFactory.getInstance("EC")
+            .generatePublic(X509EncodedKeySpec(Base64.decode(androidB64EncodedPK, Base64.NO_WRAP)))
     }
 
     fun iosB64EncodedStrPKToPK(iosB64EncodedPK: String): PublicKey {
