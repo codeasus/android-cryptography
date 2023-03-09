@@ -12,6 +12,20 @@ import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
 
 object ECDHGround {
+//    A. First set of actions
+//    ----------------------------------
+//    0. Login or Signup.
+//    1. Generate AES Key that is stored in Android KeyStore(A piece of hardware designed for cryptographic keys).
+//    2. Generate Elliptic Curve Public Key and Private Key Pair (First version one, later versions 10 or more).
+//    3. Write AES encrypted EC KeyPair to database .
+//    4. Send EC Public Key to the server.
+//
+//    B. You create a conversation with a user
+//    ------------------------------------------
+//    0. Get the user's public key.
+//    1. Merge it with your private key and create a shared secret key.
+//    2. Derive a new key from KDF that your shared secret key is passed in as an argument.
+//    3. Either encrypt the secret key and store it in a column in local database or generate it everytime on conversion screen.
 
     private var iv = SecureRandom().generateSeed(16)
 
@@ -39,7 +53,6 @@ object ECDHGround {
         // EC  -> Elliptic Curve
         // p,P -> Point
         // j,J -> Java (Standard Java Version)
-        // x,y -> EC point coordinates
         val decodedPK = Base64.decode(iosB64EncodedPK, Base64.NO_WRAP)
         val x9ECParamSpec = SECNamedCurves.getByName("secp256r1")
         val curve = x9ECParamSpec.curve
@@ -78,45 +91,32 @@ object ECDHGround {
         return ecParams.curve
     }
 
-    fun encryptString(key: SecretKey?, plainText: String): String? {
-        return try {
-            val ivSpec = IvParameterSpec(iv)
-            val cipher = Cipher.getInstance("AES/GCM/NoPadding", "BC")
-            val plainTextBytes = plainText.toByteArray(charset("UTF-8"))
-            cipher.init(Cipher.ENCRYPT_MODE, key, ivSpec)
-            val cipherText = ByteArray(cipher.getOutputSize(plainTextBytes.size))
-            var encryptLength = cipher.update(
-                plainTextBytes, 0,
-                plainTextBytes.size, cipherText, 0
-            )
-            encryptLength += cipher.doFinal(cipherText, encryptLength)
-            Base64.encodeToString(cipherText, Base64.NO_WRAP)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
-        }
+    fun encrypt(key: SecretKey?, plainText: String): String {
+        val ivSpec = IvParameterSpec(iv)
+        val cipher = Cipher.getInstance("AES/GCM/NoPadding")
+        val plainTextBytes = plainText.toByteArray(charset("UTF-8"))
+        cipher.init(Cipher.ENCRYPT_MODE, key, ivSpec)
+        val cipherText = ByteArray(cipher.getOutputSize(plainTextBytes.size))
+        var encryptLength = cipher.update(
+            plainTextBytes, 0,
+            plainTextBytes.size, cipherText, 0
+        )
+        encryptLength += cipher.doFinal(cipherText, encryptLength)
+        return Base64.encodeToString(cipherText, Base64.NO_WRAP)
     }
 
-    fun decryptString(key: SecretKey?, cipherText: String?): String? {
-        return try {
-            val decryptionKey: Key = SecretKeySpec(
-                key!!.encoded,
-                key.algorithm
-            )
-            val ivSpec = IvParameterSpec(iv)
-            val cipher = Cipher.getInstance("AES/GCM/NoPadding", "BC")
-            val cipherTextBytes = Base64.decode(cipherText, Base64.NO_WRAP)
-            cipher.init(Cipher.DECRYPT_MODE, decryptionKey, ivSpec)
-            val plainText = ByteArray(cipher.getOutputSize(cipherTextBytes.size))
-            var decryptLength = cipher.update(
-                cipherTextBytes, 0,
-                cipherTextBytes.size, plainText, 0
-            )
-            decryptLength += cipher.doFinal(plainText, decryptLength)
-            String(plainText, StandardCharsets.UTF_8)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
-        }
+    fun decrypt(key: SecretKey?, cipherText: String?): String {
+        val decryptionKey: Key = SecretKeySpec(key!!.encoded, key.algorithm)
+        val ivSpec = IvParameterSpec(iv)
+        val cipher = Cipher.getInstance("AES/GCM/NoPadding")
+        val cipherTextBytes = Base64.decode(cipherText, Base64.NO_WRAP)
+        cipher.init(Cipher.DECRYPT_MODE, decryptionKey, ivSpec)
+        val plainText = ByteArray(cipher.getOutputSize(cipherTextBytes.size))
+        var decryptLength = cipher.update(
+            cipherTextBytes, 0,
+            cipherTextBytes.size, plainText, 0
+        )
+        decryptLength += cipher.doFinal(plainText, decryptLength)
+        return String(plainText, StandardCharsets.UTF_8)
     }
 }
