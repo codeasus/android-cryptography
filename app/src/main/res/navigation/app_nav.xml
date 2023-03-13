@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/app_nav"
+    app:startDestination="@id/mainFragment">
+
+    <fragment
+        android:id="@+id/publicKeyFragment"
+        android:name="codeasus.projects.encryption.features.publickey.view.PublicKeyFragment"
+        android:label="fragment_public_key"
+        tools:layout="@layout/fragment_public_key" >
+        <action
+            android:id="@+id/publicKeyFragToMainFrag"
+            app:destination="@id/mainFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/mainFragment"
+        android:name="codeasus.projects.encryption.features.main.view.MainFragment"
+        android:label="fragment_main"
+        tools:layout="@layout/fragment_main" >
+        <action
+            android:id="@+id/mainFragToPublicKeyFrag"
+            app:destination="@id/publicKeyFragment" />
+    </fragment>
+</navigation>
