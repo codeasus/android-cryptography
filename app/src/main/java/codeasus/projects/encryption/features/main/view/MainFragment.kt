@@ -27,7 +27,7 @@ class MainFragment : Fragment() {
 
     private fun setView() {
         mBinding.apply {
-            btnToPublicKeyFrag.setOnClickListener {
+            btnToKeyPairFrag.setOnClickListener {
                 mNavController.navigate(R.id.mainFragToPublicKeyFrag)
             }
         }

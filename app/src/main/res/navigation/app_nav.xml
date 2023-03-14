@@ -7,9 +7,9 @@
 
     <fragment
         android:id="@+id/publicKeyFragment"
-        android:name="codeasus.projects.encryption.features.publickey.view.PublicKeyFragment"
+        android:name="codeasus.projects.encryption.features.keypair.view.KeyPairFragment"
         android:label="fragment_public_key"
-        tools:layout="@layout/fragment_public_key" >
+        tools:layout="@layout/fragment_key_pair" >
         <action
             android:id="@+id/publicKeyFragToMainFrag"
             app:destination="@id/mainFragment" />
