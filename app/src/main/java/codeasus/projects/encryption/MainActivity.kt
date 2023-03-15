@@ -24,10 +24,14 @@ class MainActivity : AppCompatActivity() {
         mNavHostFragment =
             supportFragmentManager.findFragmentById(mBinding.fragmentContainerView.id) as NavHostFragment
         mNavController = mNavHostFragment.navController
+        setView()
         setContentView(mBinding.root)
     }
 
     override fun onNavigateUp(): Boolean {
         return super.onNavigateUp() || onSupportNavigateUp()
+    }
+
+    private fun setView() {
     }
 }

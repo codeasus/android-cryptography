@@ -2,6 +2,9 @@ package codeasus.projects.encryption.crypto.ecdh
 
 import android.util.Base64
 import org.bouncycastle.asn1.sec.SECNamedCurves
+import org.bouncycastle.crypto.digests.SHA256Digest
+import org.bouncycastle.crypto.generators.HKDFBytesGenerator
+import org.bouncycastle.crypto.params.HKDFParameters
 import org.bouncycastle.math.ec.ECCurve
 import java.math.BigInteger
 import java.nio.charset.StandardCharsets
@@ -28,6 +31,14 @@ object ECDHGround {
 //    3. Either encrypt the secret key and store it in a column in local database or generate it everytime on conversion screen.
 
     private var iv = SecureRandom().generateSeed(16)
+
+    fun generateSecretKeyWithKDF(secretKeyEncoded: ByteArray): ByteArray {
+        val data = ByteArray(32)
+        val kdfBytesGenerator = HKDFBytesGenerator(SHA256Digest())
+        kdfBytesGenerator.init(HKDFParameters(secretKeyEncoded, null, null))
+        kdfBytesGenerator.generateBytes(data, 0, 32)
+        return data
+    }
 
     fun generateECKeys(): KeyPair {
         val ecGenParameterSpec = ECGenParameterSpec("secp256r1")

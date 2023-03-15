@@ -57,22 +57,27 @@ object MultiplatformSampleTests {
         "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAExZK+YkNhLLGMSmobl1ocbYWYcp2isx63jXVsdpUg4OKZjSVNy5Ggbc1r18ogRHh2yZILolVy1HymK2L3NaLxGQ=="
     )
 
-    private fun iosAndroidKeyCompareLogs() {
+    fun iosAndroidKeyCompareLogs() {
         val androidPublicKeys: MutableList<String> = mutableListOf()
-        val secretKeys: MutableList<String> = mutableListOf()
+        val secretKeysAndKDFedDerivations: MutableList<Pair<String, String>> = mutableListOf()
 
         for (publicKey in iosPublicKeys) {
             val iosPK = ECDHGround.iosB64EncodedStrPKToPK(publicKey)
             val keyPair = ECDHGround.generateECKeys()
             val sharedSecretKey = ECDHGround.generateSharedSecret(keyPair.private, iosPK)
             androidPublicKeys.add(Base64.encodeToString(keyPair.public?.encoded, Base64.NO_WRAP))
-            secretKeys.add(Base64.encodeToString(sharedSecretKey.encoded, Base64.NO_WRAP))
+            val b64EncodedSecretKey = Base64.encodeToString(sharedSecretKey.encoded, Base64.NO_WRAP)
+            val b64EncodedKDFDerivation = Base64.encodeToString(
+                ECDHGround.generateSecretKeyWithKDF(sharedSecretKey.encoded),
+                Base64.NO_WRAP
+            )
+            secretKeysAndKDFedDerivations.add(Pair(b64EncodedSecretKey, b64EncodedKDFDerivation))
         }
         androidPublicKeys.forEach { Log.e(TAG, it) }
-        secretKeys.forEach { Log.i(TAG, it) }
+        secretKeysAndKDFedDerivations.forEach { Log.i(TAG, "${it.first} : ${it.second}") }
     }
 
-    private fun androidKeyCompareLogs() {
+    fun androidKeyCompareLogs() {
         androidPublicKeys.forEach {
             Log.d(
                 TAG,
@@ -128,9 +133,14 @@ object MultiplatformSampleTests {
 
     fun encryptDataForIOS() {
         val data = "Message: 'əıöğw@#><\",352:?%!)(*?öçş32423🍺🍺🥞🥞😒👌'"
-        val iosPK = "MIIBCgKCAQEApfl+NAQAUhfaayLwvd/ZjJqz36p1nN2GjqtKfNcJ06zIvTKUxTJA14jxXcYRdctqzU9t1YLJgwQsKx/s0I81yMWX45Bpn6j/4zKvplV7o/DGMU8gL/aegT8KjGbNSYwah6StLXVlMJKqykehooqgr6YotashXDncuMn5MEHlZIl+vMb31u+7C7cd1j0kGjDyPUQmYdXaOaMPxYmKUoQz4rhzt8r49NpsCHW9HHWB4/3y7fRfu4uHjtKAPASi2gKgYmdoO3iPnBqBAlEWtO9WPcIM0yuQWPqqLhbcDB1A3RgciFzBDlq1HEXRXq773Xd/nEIxzvFsXIO8UZhv9WMXqwIDAQAB"
+        val iosPK =
+            "MIIBCgKCAQEApfl+NAQAUhfaayLwvd/ZjJqz36p1nN2GjqtKfNcJ06zIvTKUxTJA14jxXcYRdctqzU9t1YLJgwQsKx/s0I81yMWX45Bpn6j/4zKvplV7o/DGMU8gL/aegT8KjGbNSYwah6StLXVlMJKqykehooqgr6YotashXDncuMn5MEHlZIl+vMb31u+7C7cd1j0kGjDyPUQmYdXaOaMPxYmKUoQz4rhzt8r49NpsCHW9HHWB4/3y7fRfu4uHjtKAPASi2gKgYmdoO3iPnBqBAlEWtO9WPcIM0yuQWPqqLhbcDB1A3RgciFzBDlq1HEXRXq773Xd/nEIxzvFsXIO8UZhv9WMXqwIDAQAB"
         val pair = AESCryptographyUtility.getSKAndIVPair()
-        val encryptedData = AESCryptographyUtility.encrypt(data.toByteArray(StandardCharsets.UTF_8), pair.first, pair.second)
+        val encryptedData = AESCryptographyUtility.encrypt(
+            data.toByteArray(StandardCharsets.UTF_8),
+            pair.first,
+            pair.second
+        )
         val b64EncodedEncryptedData = Base64.encodeToString(encryptedData, Base64.NO_WRAP)
         val pK = RSACryptographyUtility.iOSB64EncodedStrPKToPK(iosPK)
         val encryptedSK = RSACryptographyUtility.encrypt(pair.first.encoded, pK)
