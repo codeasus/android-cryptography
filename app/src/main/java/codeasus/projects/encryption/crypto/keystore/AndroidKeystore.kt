@@ -15,7 +15,8 @@ object AndroidKeystore {
     private const val ENCRYPTION_MODE_AES_GCM_NO_PADDING = "AES/GCM/NoPadding"
     private const val KEYSTORE_ALIAS_AES = "EnigmaApp_AESKeyAlias"
 
-    private const val STRING_ERROR_SECRET_KEY = "Encryption/Decryption SecretKey has not been generated"
+    private const val STRING_ERROR_SECRET_KEY =
+        "Encryption/Decryption SecretKey has not been generated"
 
     @Suppress("unused")
     private const val TAG = "DBG@CRYPTO -> AndroidKeyStoreUtil"
@@ -24,7 +25,10 @@ object AndroidKeystore {
         if (VERSION.SDK_INT >= VERSION_CODES.M) {
             val keyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, PROVIDER)
             val keyGenParameterSpec = KeyGenParameterSpec
-                .Builder(KEYSTORE_ALIAS_AES, KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT)
+                .Builder(
+                    KEYSTORE_ALIAS_AES,
+                    KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT
+                )
                 .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
                 .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
                 .setRandomizedEncryptionRequired(false)
@@ -40,10 +44,18 @@ object AndroidKeystore {
             load(null)
         }
         if (keyStore.containsAlias(KEYSTORE_ALIAS_AES)) {
-            val secretKeyEntry = keyStore.getEntry(KEYSTORE_ALIAS_AES, null) as KeyStore.SecretKeyEntry
+            val secretKeyEntry =
+                keyStore.getEntry(KEYSTORE_ALIAS_AES, null) as KeyStore.SecretKeyEntry
             return secretKeyEntry.secretKey
         }
         throw RuntimeException(STRING_ERROR_SECRET_KEY)
+    }
+
+    fun isAESKeyGenerated(): Boolean {
+        val keyStore = KeyStore.getInstance(PROVIDER).apply {
+            load(null)
+        }
+        return keyStore.containsAlias(KEYSTORE_ALIAS_AES)
     }
 
     fun encrypt(data: ByteArray, ivBytes: ByteArray): ByteArray {
@@ -52,9 +64,21 @@ object AndroidKeystore {
         return cipher.doFinal(data)
     }
 
+    fun encrypt(data: ByteArray): ByteArray {
+        val cipher = Cipher.getInstance(ENCRYPTION_MODE_AES_GCM_NO_PADDING)
+        cipher.init(Cipher.ENCRYPT_MODE, getSecretKey())
+        return cipher.doFinal(data)
+    }
+
     fun decrypt(cipherData: ByteArray, ivBytes: ByteArray): ByteArray {
         val cipher = Cipher.getInstance(ENCRYPTION_MODE_AES_GCM_NO_PADDING)
         cipher.init(Cipher.DECRYPT_MODE, getSecretKey(), GCMParameterSpec(128, ivBytes))
+        return cipher.doFinal(cipherData)
+    }
+
+    fun decrypt(cipherData: ByteArray): ByteArray {
+        val cipher = Cipher.getInstance(ENCRYPTION_MODE_AES_GCM_NO_PADDING)
+        cipher.init(Cipher.DECRYPT_MODE, getSecretKey())
         return cipher.doFinal(cipherData)
     }
 }

@@ -105,6 +105,33 @@ object MultiplatformSampleTests {
         Log.w(TAG, Base64.encodeToString(bSharedSecretKey.encoded, Base64.NO_WRAP))
     }
 
+
+    fun testAndroidSecretKeysWithKDF() {
+        val aKP = ECDHGround.generateECKeys()
+        val aB64EncodedStrPK = Base64.encodeToString(aKP.public.encoded, Base64.NO_WRAP)
+        val aPK = ECDHGround.androidB64EncodedStrPKtoPK(aB64EncodedStrPK)
+
+        val bKP = ECDHGround.generateECKeys()
+        val bB64EncodedStrPK = Base64.encodeToString(bKP.public.encoded, Base64.NO_WRAP)
+        val bPK = ECDHGround.androidB64EncodedStrPKtoPK(bB64EncodedStrPK)
+
+        val aSharedSecretKey = ECDHGround.generateSecretKeyWithKDF(
+            ECDHGround.generateSharedSecret(
+                aKP.private,
+                bPK
+            ).encoded
+        )
+        val bSharedSecretKey = ECDHGround.generateSecretKeyWithKDF(
+            ECDHGround.generateSharedSecret(
+                bKP.private,
+                aPK
+            ).encoded
+        )
+
+        Log.w(TAG, Base64.encodeToString(aSharedSecretKey, Base64.NO_WRAP))
+        Log.w(TAG, Base64.encodeToString(bSharedSecretKey, Base64.NO_WRAP))
+    }
+
     fun decryptIOSEncryptedData0() {
         val encryptedIOSData =
             "uXhGVYPIhZLJRZWbjiDd7mzGkHCyKt80vf4LwsqCg+CFHZQn8XKHJQGy4VHj877xhnHnckPvMl1czQYNCddrRkyKG1qLZOjr78m31bp83FB/VRoUf/GIvp+zFPVGKJXT5ANXqrEqjRvZyjLzT+Ei9ZsMbC76KXWmVXw1dvde9GmuYomiTkSvwSvFHkYGrtJbRI0HpUkk1nfaPXRFvj5COmpqt9lexpYcZ25uVrUxKIadZ1GSvrWMjeE3P9WFlP56t/5qLJ2gv7cYGKgepyBYCxd2HzayCV75zmXveXviPfXvF/lUQhhyGkcQX+lx4F6pbBldKHJPoLGv31BYraW7eQ=="

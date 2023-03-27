@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import codeasus.projects.encryption.R
+import codeasus.projects.encryption.crypto.keystore.AndroidKeystore
 import codeasus.projects.encryption.databinding.FragmentMainBinding
 
 class MainFragment : Fragment() {
@@ -22,6 +23,7 @@ class MainFragment : Fragment() {
     ): View {
         mBinding = FragmentMainBinding.inflate(inflater, container, false)
         mNavController = findNavController()
+        setData()
         setView()
         return mBinding.root
     }
@@ -31,6 +33,12 @@ class MainFragment : Fragment() {
             btnToKeyPairFrag.setOnClickListener {
                 mNavController.navigate(R.id.mainFragToPublicKeyFrag)
             }
+        }
+    }
+
+    private fun setData() {
+        if (!AndroidKeystore.isAESKeyGenerated()) {
+            AndroidKeystore.generateSecretAESKey()
         }
     }
 }

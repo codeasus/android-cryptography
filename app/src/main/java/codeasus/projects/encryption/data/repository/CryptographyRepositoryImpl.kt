@@ -15,6 +15,10 @@ class CryptographyRepositoryImpl(
         cryptographyDAO.insertEllipticCurveKeyPair(ellipticCurveKeyPair)
     }
 
+    override suspend fun deleteEllipticCurveKeyPairs() {
+        cryptographyDAO.deleteEllipticCurveKeyPairs()
+    }
+
     override fun getAllEllipticCurveKeyPairs(): Flow<List<EllipticCurveKeyPairEntity>> {
         return cryptographyDAO.getAllEllipticCurveKeyPairs()
     }

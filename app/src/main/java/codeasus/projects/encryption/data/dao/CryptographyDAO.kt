@@ -16,6 +16,9 @@ interface CryptographyDAO {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertEllipticCurveKeyPair(ellipticCurveKeyPair: EllipticCurveKeyPairEntity)
 
+    @Query("DELETE FROM ${DatabaseConstants.ENTITY_ELLIPTIC_CURVE_KEY_PAIR}")
+    suspend fun deleteEllipticCurveKeyPairs()
+
     @Query("SELECT * FROM ${DatabaseConstants.ENTITY_ELLIPTIC_CURVE_KEY_PAIR}")
     fun getAllEllipticCurveKeyPairs(): Flow<List<EllipticCurveKeyPairEntity>>
 

@@ -8,6 +8,8 @@ interface CryptographyRepository {
 
     suspend fun insertEllipticCurveKeyPair(ellipticCurveKeyPair: EllipticCurveKeyPairEntity)
 
+    suspend fun deleteEllipticCurveKeyPairs()
+
     fun getAllEllipticCurveKeyPairs(): Flow<List<EllipticCurveKeyPairEntity>>
 
     suspend fun deleteEllipticCurveKeyPairByID(id: Long)
