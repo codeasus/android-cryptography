@@ -12,7 +12,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import codeasus.projects.encryption.R
-import codeasus.projects.encryption.crypto.ecdh.ECDHGround
 import codeasus.projects.encryption.databinding.FragmentKeyPairBinding
 import codeasus.projects.encryption.features.keypair.adapter.KeyPairAdapter
 import codeasus.projects.encryption.features.keypair.viewmodel.KeyPairViewModel

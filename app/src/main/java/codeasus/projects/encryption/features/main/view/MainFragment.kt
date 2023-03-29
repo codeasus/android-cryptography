@@ -16,6 +16,8 @@ class MainFragment : Fragment() {
     private lateinit var mBinding: FragmentMainBinding
     private lateinit var mNavController: NavController
 
+    companion object {}
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

@@ -32,14 +32,14 @@ object ECDHGround {
 
     private var iv = SecureRandom().generateSeed(16)
 
-    fun generateSecretKeyWithKDF(secretKeyEncoded: ByteArray): ByteArray {
+    fun generateSecretKeyWithHKDF(secretKeyEncoded: ByteArray): ByteArray {
         val data = ByteArray(32)
         val kdfBytesGenerator = HKDFBytesGenerator(SHA256Digest())
         kdfBytesGenerator.init(HKDFParameters(secretKeyEncoded, null, null))
         kdfBytesGenerator.generateBytes(data, 0, 32)
         return data
     }
-
+    
     fun generateECKeys(): KeyPair {
         val ecGenParameterSpec = ECGenParameterSpec("secp256r1")
         val keyPairGenerator = KeyPairGenerator.getInstance("EC")

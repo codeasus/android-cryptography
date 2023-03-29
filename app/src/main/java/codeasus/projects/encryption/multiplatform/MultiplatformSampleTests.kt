@@ -68,7 +68,7 @@ object MultiplatformSampleTests {
             androidPublicKeys.add(Base64.encodeToString(keyPair.public?.encoded, Base64.NO_WRAP))
             val b64EncodedSecretKey = Base64.encodeToString(sharedSecretKey.encoded, Base64.NO_WRAP)
             val b64EncodedKDFDerivation = Base64.encodeToString(
-                ECDHGround.generateSecretKeyWithKDF(sharedSecretKey.encoded),
+                ECDHGround.generateSecretKeyWithHKDF(sharedSecretKey.encoded),
                 Base64.NO_WRAP
             )
             secretKeysAndKDFedDerivations.add(Pair(b64EncodedSecretKey, b64EncodedKDFDerivation))
@@ -115,13 +115,13 @@ object MultiplatformSampleTests {
         val bB64EncodedStrPK = Base64.encodeToString(bKP.public.encoded, Base64.NO_WRAP)
         val bPK = ECDHGround.androidB64EncodedStrPKtoPK(bB64EncodedStrPK)
 
-        val aSharedSecretKey = ECDHGround.generateSecretKeyWithKDF(
+        val aSharedSecretKey = ECDHGround.generateSecretKeyWithHKDF(
             ECDHGround.generateSharedSecret(
                 aKP.private,
                 bPK
             ).encoded
         )
-        val bSharedSecretKey = ECDHGround.generateSecretKeyWithKDF(
+        val bSharedSecretKey = ECDHGround.generateSecretKeyWithHKDF(
             ECDHGround.generateSharedSecret(
                 bKP.private,
                 aPK
