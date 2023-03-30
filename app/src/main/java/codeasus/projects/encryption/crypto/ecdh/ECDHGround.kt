@@ -3,7 +3,9 @@ package codeasus.projects.encryption.crypto.ecdh
 import android.util.Base64
 import org.bouncycastle.asn1.sec.SECNamedCurves
 import org.bouncycastle.crypto.digests.SHA256Digest
+import org.bouncycastle.crypto.generators.Argon2BytesGenerator
 import org.bouncycastle.crypto.generators.HKDFBytesGenerator
+import org.bouncycastle.crypto.params.Argon2Parameters
 import org.bouncycastle.crypto.params.HKDFParameters
 import org.bouncycastle.math.ec.ECCurve
 import java.math.BigInteger
@@ -32,6 +34,7 @@ object ECDHGround {
 
     private var iv = SecureRandom().generateSeed(16)
 
+
     fun generateSecretKeyWithHKDF(secretKeyEncoded: ByteArray): ByteArray {
         val data = ByteArray(32)
         val kdfBytesGenerator = HKDFBytesGenerator(SHA256Digest())
@@ -39,7 +42,25 @@ object ECDHGround {
         kdfBytesGenerator.generateBytes(data, 0, 32)
         return data
     }
-    
+
+    fun generateSecretKeyWithArgon2(secretKeyEncoded: ByteArray): ByteArray {
+        val hash = ByteArray(32)
+        val numberOfThreads = 1
+        val memory = 8192
+        val numberOfIterations = 10
+        val argon2Generator = Argon2BytesGenerator().apply {
+            init(
+                Argon2Parameters.Builder(Argon2Parameters.ARGON2_id)
+                    .withMemoryAsKB(memory)
+                    .withParallelism(numberOfThreads)
+                    .withIterations(numberOfIterations)
+                    .build()
+            )
+        }
+        argon2Generator.generateBytes(secretKeyEncoded, hash)
+        return hash
+    }
+
     fun generateECKeys(): KeyPair {
         val ecGenParameterSpec = ECGenParameterSpec("secp256r1")
         val keyPairGenerator = KeyPairGenerator.getInstance("EC")
@@ -63,7 +84,7 @@ object ECDHGround {
         // Bc,bC  -> BouncyCastle
         // EC  -> Elliptic Curve
         // p,P -> Point
-        // j,J -> Java (Standard Java Version)
+        // j,J -> Java (Standard Java Version), meaning it is specific to standard Java
         val decodedPK = Base64.decode(iosB64EncodedPK, Base64.NO_WRAP)
         val x9ECParamSpec = SECNamedCurves.getByName("secp256r1")
         val curve = x9ECParamSpec.curve

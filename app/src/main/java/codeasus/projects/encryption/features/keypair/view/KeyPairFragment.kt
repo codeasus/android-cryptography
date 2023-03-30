@@ -38,7 +38,8 @@ class KeyPairFragment : Fragment() {
         mBinding = FragmentKeyPairBinding.inflate(inflater, container, false)
         mNavController = findNavController()
         mMenuHost = requireActivity()
-        MultiplatformSampleTests.testAndroidSecretKeysWithKDF()
+        MultiplatformSampleTests.testMessageCryptographyWithHKDF()
+        MultiplatformSampleTests.testMessageCryptographyWithArgon2()
         setData()
         setView()
         return mBinding.root
