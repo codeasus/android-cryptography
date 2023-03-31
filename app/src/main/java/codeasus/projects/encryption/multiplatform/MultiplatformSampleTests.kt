@@ -5,6 +5,7 @@ import android.util.Log
 import codeasus.projects.encryption.crypto.aes.AESCryptographyUtility
 import codeasus.projects.encryption.crypto.ecdh.ECDHGround
 import codeasus.projects.encryption.crypto.rsa.RSACryptographyUtility
+import org.bouncycastle.crypto.generators.Argon2BytesGenerator
 import org.bouncycastle.crypto.params.Argon2Parameters
 import java.nio.charset.StandardCharsets
 import javax.crypto.spec.SecretKeySpec
@@ -59,9 +60,54 @@ object MultiplatformSampleTests {
         "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAExZK+YkNhLLGMSmobl1ocbYWYcp2isx63jXVsdpUg4OKZjSVNy5Ggbc1r18ogRHh2yZILolVy1HymK2L3NaLxGQ=="
     )
 
-    private val memoryAllocations = listOf(8192, 16384, 32768)
+    private val allocatedMemories = listOf(8192, 16384, 32768)
     private val numberOfThreads = listOf(1, 2, 4)
     private val numberOfIterations = listOf(10, 20, 30)
+
+    data class Argon2ParameterBundle(
+        val memoryAllocatedInKb: Int,
+        val numberOfThreadsAllocated: Int,
+        val numberOfIterations: Int
+    )
+
+    fun benchmarkHKDF(cycles: Int): Long {
+        val startTimeInNs = System.nanoTime()
+        repeat(cycles) {
+            ECDHGround.generateSecretKeyWithHKDF("password".toByteArray())
+        }
+        val endTimeInNs = System.nanoTime()
+        return (endTimeInNs - startTimeInNs) / cycles
+    }
+
+    fun benchmarkArgon2(cycles: Int): Map<Argon2ParameterBundle, Long> {
+        val result: MutableMap<Argon2ParameterBundle, Long> = mutableMapOf()
+
+        for (allocatedMemory in allocatedMemories) {
+            for (threadCount in numberOfThreads) {
+                for (iterationCount in numberOfIterations) {
+                    val startTimeInNs = System.nanoTime()
+                    for (i in 0 until cycles) {
+                        Log.d(TAG, "Generating: {$allocatedMemory, $threadCount, $iterationCount}")
+                        val argon2Gen = Argon2BytesGenerator().apply {
+                            init(
+                                Argon2Parameters.Builder(Argon2Parameters.ARGON2_id)
+                                    .withMemoryAsKB(allocatedMemory)
+                                    .withParallelism(threadCount)
+                                    .withIterations(iterationCount)
+                                    .build()
+                            )
+                        }
+                        argon2Gen.generateBytes("password".toByteArray(), ByteArray(32))
+                    }
+                    val elapsedTimeInNs = System.nanoTime() - startTimeInNs
+                    val avgElapsedTimePerCombinationInNs = elapsedTimeInNs / cycles
+                    result[Argon2ParameterBundle(allocatedMemory, threadCount, iterationCount)] =
+                        avgElapsedTimePerCombinationInNs
+                }
+            }
+        }
+        return result
+    }
 
     fun iosAndroidKeyCompareLogs() {
         val androidPublicKeys: MutableList<String> = mutableListOf()

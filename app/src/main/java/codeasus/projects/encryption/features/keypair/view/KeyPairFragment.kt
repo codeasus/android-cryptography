@@ -1,6 +1,7 @@
 package codeasus.projects.encryption.features.keypair.view
 
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.core.view.MenuHost
@@ -30,6 +31,10 @@ class KeyPairFragment : Fragment() {
 
     private val viewModel: KeyPairViewModel by viewModels()
 
+    companion object {
+        private const val TAG = "DBG@KeyPairFragment"
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -38,8 +43,24 @@ class KeyPairFragment : Fragment() {
         mBinding = FragmentKeyPairBinding.inflate(inflater, container, false)
         mNavController = findNavController()
         mMenuHost = requireActivity()
-        MultiplatformSampleTests.testMessageCryptographyWithHKDF()
-        MultiplatformSampleTests.testMessageCryptographyWithArgon2()
+//        MultiplatformSampleTests.testMessageCryptographyWithHKDF()
+//        MultiplatformSampleTests.testMessageCryptographyWithArgon2()
+        val threadForHKDF = Thread {
+            val numberOfCycles = 500
+            val res = MultiplatformSampleTests.benchmarkHKDF(numberOfCycles)
+            Log.i(TAG, "Based on $numberOfCycles cycles, average single HKDF hash generation time: ${res}Ns")
+        }
+        threadForHKDF.start()
+        val threadForArgon2 = Thread {
+            val numberOfCycles = 10
+            val res = MultiplatformSampleTests.benchmarkArgon2(numberOfCycles)
+            Log.i(TAG, "Result of generating Argon2 hashes in $numberOfCycles cycles.")
+            val sortedRes = res.entries.sortedBy { it.value }
+            sortedRes.forEach { entry ->
+                Log.w(TAG, "${entry.key}: ${entry.value}")
+            }
+        }
+        threadForArgon2.start()
         setData()
         setView()
         return mBinding.root
@@ -49,6 +70,7 @@ class KeyPairFragment : Fragment() {
         mKeyPairAdapter = KeyPairAdapter {
 
         }
+
         mBinding.apply {
             rvKeypair.adapter = mKeyPairAdapter
         }
@@ -62,12 +84,14 @@ class KeyPairFragment : Fragment() {
                 return when (menuItem.itemId) {
                     R.id.menu_key_pair_clean -> {
                         viewModel.deleteAllECKeyPairs()
-                        Toast.makeText(requireContext(), "Cleared key pairs", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireContext(), "Cleared key pairs", Toast.LENGTH_SHORT)
+                            .show()
                         true
                     }
                     R.id.menu_key_pair_generate -> {
                         viewModel.generateECKeyPairs(10)
-                        Toast.makeText(requireContext(), "Generated key pairs", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireContext(), "Generated key pairs", Toast.LENGTH_SHORT)
+                            .show()
                         true
                     }
                     else -> false
