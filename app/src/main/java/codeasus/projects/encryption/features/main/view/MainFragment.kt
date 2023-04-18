@@ -9,7 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import codeasus.projects.encryption.R
-import codeasus.projects.encryption.crypto.keystore.AndroidKeystore
+import codeasus.projects.security.crypto.keystore.AndroidKeystore
 import codeasus.projects.encryption.databinding.FragmentMainBinding
 
 class MainFragment : Fragment() {

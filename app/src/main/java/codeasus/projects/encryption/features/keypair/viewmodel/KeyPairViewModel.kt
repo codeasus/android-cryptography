@@ -4,11 +4,11 @@ import android.app.Application
 import android.util.Base64
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import codeasus.projects.encryption.crypto.ecdh.ECDHGround
-import codeasus.projects.encryption.crypto.keystore.AndroidKeystore
-import codeasus.projects.encryption.data.entity.EllipticCurveKeyPairEntity
+import codeasus.projects.security.crypto.ecdh.ECDHUtility
+import codeasus.projects.security.crypto.keystore.AndroidKeystore
+import codeasus.projects.security.data.entity.EllipticCurveKeyPairEntity
 import codeasus.projects.encryption.data.model.features.keypair.KeyPair
-import codeasus.projects.encryption.data.repository.CryptographyRepository
+import codeasus.projects.security.data.repository.CryptographyRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -45,7 +45,7 @@ class KeyPairViewModel @Inject constructor(
     fun generateECKeyPairs(size: Int = 10) = viewModelScope.launch(Dispatchers.IO) {
         val ecKeyPairSet: MutableSet<EllipticCurveKeyPairEntity> = mutableSetOf()
         for (i in 0 until size) {
-            val ecKeyPair = ECDHGround.generateECKeys()
+            val ecKeyPair = ECDHUtility.generateECKeys()
             val b64EncodedPubKey =
                 Base64.encodeToString(ecKeyPair.public.encoded, Base64.NO_WRAP)
             val b64EncodedDecryptedPriKey =

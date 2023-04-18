@@ -16,7 +16,7 @@ import codeasus.projects.encryption.R
 import codeasus.projects.encryption.databinding.FragmentKeyPairBinding
 import codeasus.projects.encryption.features.keypair.adapter.KeyPairAdapter
 import codeasus.projects.encryption.features.keypair.viewmodel.KeyPairViewModel
-import codeasus.projects.encryption.multiplatform.MultiplatformSampleTests
+import codeasus.projects.security.multiplatform.MultiplatformSampleTests
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch

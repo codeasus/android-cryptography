@@ -1,4 +1,4 @@
-package codeasus.projects.encryption.crypto.ecdh
+package codeasus.projects.security.crypto.ecdh
 
 import android.util.Base64
 import org.bouncycastle.asn1.sec.SECNamedCurves
@@ -16,7 +16,7 @@ import javax.crypto.*
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
 
-object ECDHGround {
+object ECDHUtility {
 //    A. First set of actions
 //    ----------------------------------
 //    0. Login or Signup.

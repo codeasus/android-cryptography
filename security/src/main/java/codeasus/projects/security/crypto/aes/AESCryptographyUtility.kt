@@ -1,4 +1,4 @@
-package codeasus.projects.encryption.crypto.aes
+package codeasus.projects.security.crypto.aes
 
 import android.util.Base64
 import java.security.SecureRandom

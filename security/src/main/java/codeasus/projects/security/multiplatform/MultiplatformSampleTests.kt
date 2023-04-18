@@ -1,10 +1,10 @@
-package codeasus.projects.encryption.multiplatform
+package codeasus.projects.security.multiplatform
 
 import android.util.Base64
 import android.util.Log
-import codeasus.projects.encryption.crypto.aes.AESCryptographyUtility
-import codeasus.projects.encryption.crypto.ecdh.ECDHGround
-import codeasus.projects.encryption.crypto.rsa.RSACryptographyUtility
+import codeasus.projects.security.crypto.aes.AESCryptographyUtility
+import codeasus.projects.security.crypto.ecdh.ECDHUtility
+import codeasus.projects.security.crypto.rsa.RSACryptographyUtility
 import org.bouncycastle.crypto.generators.Argon2BytesGenerator
 import org.bouncycastle.crypto.params.Argon2Parameters
 import java.nio.charset.StandardCharsets
@@ -73,7 +73,7 @@ object MultiplatformSampleTests {
     fun benchmarkHKDF(cycles: Int): Long {
         val startTimeInNs = System.nanoTime()
         repeat(cycles) {
-            ECDHGround.generateSecretKeyWithHKDF("password".toByteArray())
+            ECDHUtility.generateSecretKeyWithHKDF("password".toByteArray())
         }
         val endTimeInNs = System.nanoTime()
         return (endTimeInNs - startTimeInNs) / cycles
@@ -114,13 +114,13 @@ object MultiplatformSampleTests {
         val secretKeysAndKDFedDerivations: MutableList<Pair<String, String>> = mutableListOf()
 
         for (publicKey in iosPublicKeys) {
-            val iosPubKey = ECDHGround.iosB64EncodedStrPKToPK(publicKey)
-            val keyPair = ECDHGround.generateECKeys()
-            val secretKey = ECDHGround.generateSharedSecret(keyPair.private, iosPubKey)
+            val iosPubKey = ECDHUtility.iosB64EncodedStrPKToPK(publicKey)
+            val keyPair = ECDHUtility.generateECKeys()
+            val secretKey = ECDHUtility.generateSharedSecret(keyPair.private, iosPubKey)
             androidPublicKeys.add(Base64.encodeToString(keyPair.public?.encoded, Base64.NO_WRAP))
             val b64EncodedSecretKey = Base64.encodeToString(secretKey.encoded, Base64.NO_WRAP)
             val b64EncodedKDFDerivation = Base64.encodeToString(
-                ECDHGround.generateSecretKeyWithHKDF(secretKey.encoded),
+                ECDHUtility.generateSecretKeyWithHKDF(secretKey.encoded),
                 Base64.NO_WRAP
             )
             secretKeysAndKDFedDerivations.add(Pair(b64EncodedSecretKey, b64EncodedKDFDerivation))
@@ -134,7 +134,7 @@ object MultiplatformSampleTests {
             Log.d(
                 TAG,
                 Base64.encodeToString(
-                    ECDHGround.androidB64EncodedStrPKtoPK(it).encoded,
+                    ECDHUtility.androidB64EncodedStrPKtoPK(it).encoded,
                     Base64.NO_WRAP
                 )
             )
@@ -142,83 +142,83 @@ object MultiplatformSampleTests {
     }
 
     private fun testAndroidSecretKeys() {
-        val keyPairByA = ECDHGround.generateECKeys()
+        val keyPairByA = ECDHUtility.generateECKeys()
         val b64EncodedStrPubKeyByA =
             Base64.encodeToString(keyPairByA.public.encoded, Base64.NO_WRAP)
-        val pubKeyByA = ECDHGround.androidB64EncodedStrPKtoPK(b64EncodedStrPubKeyByA)
+        val pubKeyByA = ECDHUtility.androidB64EncodedStrPKtoPK(b64EncodedStrPubKeyByA)
 
-        val keyPairByB = ECDHGround.generateECKeys()
+        val keyPairByB = ECDHUtility.generateECKeys()
         val b64EncodedStrPubKeyByB =
             Base64.encodeToString(keyPairByB.public.encoded, Base64.NO_WRAP)
-        val pubKeyByB = ECDHGround.androidB64EncodedStrPKtoPK(b64EncodedStrPubKeyByB)
+        val pubKeyByB = ECDHUtility.androidB64EncodedStrPKtoPK(b64EncodedStrPubKeyByB)
 
-        val secretKeyByA = ECDHGround.generateSharedSecret(keyPairByA.private, pubKeyByB)
-        val secretKeyByB = ECDHGround.generateSharedSecret(keyPairByB.private, pubKeyByA)
+        val secretKeyByA = ECDHUtility.generateSharedSecret(keyPairByA.private, pubKeyByB)
+        val secretKeyByB = ECDHUtility.generateSharedSecret(keyPairByB.private, pubKeyByA)
 
         Log.w(TAG, Base64.encodeToString(secretKeyByA.encoded, Base64.NO_WRAP))
         Log.w(TAG, Base64.encodeToString(secretKeyByB.encoded, Base64.NO_WRAP))
     }
 
     fun testAndroidSecretKeysWithHKDF() {
-        val keyPairByA = ECDHGround.generateECKeys()
+        val keyPairByA = ECDHUtility.generateECKeys()
         val b64EncodedStrPubKeyByA =
             Base64.encodeToString(keyPairByA.public.encoded, Base64.NO_WRAP)
-        val pubKeyByA = ECDHGround.androidB64EncodedStrPKtoPK(b64EncodedStrPubKeyByA)
+        val pubKeyByA = ECDHUtility.androidB64EncodedStrPKtoPK(b64EncodedStrPubKeyByA)
 
-        val keyPairByB = ECDHGround.generateECKeys()
+        val keyPairByB = ECDHUtility.generateECKeys()
         val b64EncodedStrPubKeyByB =
             Base64.encodeToString(keyPairByB.public.encoded, Base64.NO_WRAP)
-        val pubKeyByB = ECDHGround.androidB64EncodedStrPKtoPK(b64EncodedStrPubKeyByB)
+        val pubKeyByB = ECDHUtility.androidB64EncodedStrPKtoPK(b64EncodedStrPubKeyByB)
 
-        val secretKeyByA = ECDHGround.generateSharedSecret(keyPairByA.private, pubKeyByB)
-        val secretKeyByB = ECDHGround.generateSharedSecret(keyPairByB.private, pubKeyByA)
+        val secretKeyByA = ECDHUtility.generateSharedSecret(keyPairByA.private, pubKeyByB)
+        val secretKeyByB = ECDHUtility.generateSharedSecret(keyPairByB.private, pubKeyByA)
 
-        val hashedSecretKeyByA = ECDHGround.generateSecretKeyWithHKDF(secretKeyByA.encoded)
-        val hashedSecretKeyByB = ECDHGround.generateSecretKeyWithHKDF(secretKeyByB.encoded)
+        val hashedSecretKeyByA = ECDHUtility.generateSecretKeyWithHKDF(secretKeyByA.encoded)
+        val hashedSecretKeyByB = ECDHUtility.generateSecretKeyWithHKDF(secretKeyByB.encoded)
 
         Log.w(TAG, Base64.encodeToString(hashedSecretKeyByA, Base64.NO_WRAP))
         Log.w(TAG, Base64.encodeToString(hashedSecretKeyByB, Base64.NO_WRAP))
     }
 
     fun testAndroidSecretKeysWithArgon2() {
-        val keyPairByA = ECDHGround.generateECKeys()
+        val keyPairByA = ECDHUtility.generateECKeys()
         val b64EncodedStrPubKeyByA =
             Base64.encodeToString(keyPairByA.public.encoded, Base64.NO_WRAP)
-        val pubKeyByA = ECDHGround.androidB64EncodedStrPKtoPK(b64EncodedStrPubKeyByA)
+        val pubKeyByA = ECDHUtility.androidB64EncodedStrPKtoPK(b64EncodedStrPubKeyByA)
 
-        val keyPairByB = ECDHGround.generateECKeys()
+        val keyPairByB = ECDHUtility.generateECKeys()
         val b64EncodedStrPubKeyByB =
             Base64.encodeToString(keyPairByB.public.encoded, Base64.NO_WRAP)
-        val pubKeyByB = ECDHGround.androidB64EncodedStrPKtoPK(b64EncodedStrPubKeyByB)
+        val pubKeyByB = ECDHUtility.androidB64EncodedStrPKtoPK(b64EncodedStrPubKeyByB)
 
-        val secretKeyByA = ECDHGround.generateSharedSecret(keyPairByA.private, pubKeyByB)
-        val secretKeyByB = ECDHGround.generateSharedSecret(keyPairByB.private, pubKeyByA)
+        val secretKeyByA = ECDHUtility.generateSharedSecret(keyPairByA.private, pubKeyByB)
+        val secretKeyByB = ECDHUtility.generateSharedSecret(keyPairByB.private, pubKeyByA)
 
         val hashedByteArraySecretKeyByA =
-            ECDHGround.generateSecretKeyWithArgon2(secretKeyByA.encoded)
+            ECDHUtility.generateSecretKeyWithArgon2(secretKeyByA.encoded)
         val hashedByteArraySecretKeyByB =
-            ECDHGround.generateSecretKeyWithArgon2(secretKeyByB.encoded)
+            ECDHUtility.generateSecretKeyWithArgon2(secretKeyByB.encoded)
 
         Log.w(TAG, Base64.encodeToString(hashedByteArraySecretKeyByA, Base64.NO_WRAP))
         Log.w(TAG, Base64.encodeToString(hashedByteArraySecretKeyByB, Base64.NO_WRAP))
     }
 
     fun testMessageCryptographyWithHKDF() {
-        val keyPairByA = ECDHGround.generateECKeys()
+        val keyPairByA = ECDHUtility.generateECKeys()
         val b64EncodedStrPubKeyByA =
             Base64.encodeToString(keyPairByA.public.encoded, Base64.NO_WRAP)
-        val pubKeyByA = ECDHGround.androidB64EncodedStrPKtoPK(b64EncodedStrPubKeyByA)
+        val pubKeyByA = ECDHUtility.androidB64EncodedStrPKtoPK(b64EncodedStrPubKeyByA)
 
-        val keyPairByB = ECDHGround.generateECKeys()
+        val keyPairByB = ECDHUtility.generateECKeys()
         val b64EncodedStrPubKeyByB =
             Base64.encodeToString(keyPairByB.public.encoded, Base64.NO_WRAP)
-        val pubKeyByB = ECDHGround.androidB64EncodedStrPKtoPK(b64EncodedStrPubKeyByB)
+        val pubKeyByB = ECDHUtility.androidB64EncodedStrPKtoPK(b64EncodedStrPubKeyByB)
 
-        val secretKeyByA = ECDHGround.generateSharedSecret(keyPairByA.private, pubKeyByB)
-        val secretKeyByB = ECDHGround.generateSharedSecret(keyPairByB.private, pubKeyByA)
+        val secretKeyByA = ECDHUtility.generateSharedSecret(keyPairByA.private, pubKeyByB)
+        val secretKeyByB = ECDHUtility.generateSharedSecret(keyPairByB.private, pubKeyByA)
 
-        val hashedByteArraySecretKeyByA = ECDHGround.generateSecretKeyWithHKDF(secretKeyByA.encoded)
-        val hashedByteArraySecretKeyByB = ECDHGround.generateSecretKeyWithHKDF(secretKeyByB.encoded)
+        val hashedByteArraySecretKeyByA = ECDHUtility.generateSecretKeyWithHKDF(secretKeyByA.encoded)
+        val hashedByteArraySecretKeyByB = ECDHUtility.generateSecretKeyWithHKDF(secretKeyByB.encoded)
 
         val hashedSecretKeyByA = SecretKeySpec(
             hashedByteArraySecretKeyByA,
@@ -237,11 +237,11 @@ object MultiplatformSampleTests {
         val message =
             "I don’t understand. Please repeat. – Не понимаю. Повторите пожалуйста üeç.ıəığölış 🥞🍺🍺🤣🤣❤"
 
-        val encryptedMessageByA = ECDHGround.encrypt(hashedSecretKeyByA, message)
-        val encryptedMessageByB = ECDHGround.encrypt(hashedSecretKeyByB, message)
+        val encryptedMessageByA = ECDHUtility.encrypt(hashedSecretKeyByA, message)
+        val encryptedMessageByB = ECDHUtility.encrypt(hashedSecretKeyByB, message)
 
-        val decryptedMessageByA = ECDHGround.decrypt(hashedSecretKeyByA, encryptedMessageByA)
-        val decryptedMessageByB = ECDHGround.decrypt(hashedSecretKeyByB, encryptedMessageByB)
+        val decryptedMessageByA = ECDHUtility.decrypt(hashedSecretKeyByA, encryptedMessageByA)
+        val decryptedMessageByB = ECDHUtility.decrypt(hashedSecretKeyByB, encryptedMessageByB)
 
         Log.w(TAG, "Encrypted Message: $encryptedMessageByA")
         Log.w(TAG, "Encrypted Message: $encryptedMessageByB")
@@ -251,23 +251,23 @@ object MultiplatformSampleTests {
     }
 
     fun testMessageCryptographyWithArgon2() {
-        val keyPairByA = ECDHGround.generateECKeys()
+        val keyPairByA = ECDHUtility.generateECKeys()
         val b64EncodedStrPubKeyByA =
             Base64.encodeToString(keyPairByA.public.encoded, Base64.NO_WRAP)
-        val pubKeyByA = ECDHGround.androidB64EncodedStrPKtoPK(b64EncodedStrPubKeyByA)
+        val pubKeyByA = ECDHUtility.androidB64EncodedStrPKtoPK(b64EncodedStrPubKeyByA)
 
-        val keyPairByB = ECDHGround.generateECKeys()
+        val keyPairByB = ECDHUtility.generateECKeys()
         val b64EncodedStrPubKeyByB =
             Base64.encodeToString(keyPairByB.public.encoded, Base64.NO_WRAP)
-        val publicKeyB = ECDHGround.androidB64EncodedStrPKtoPK(b64EncodedStrPubKeyByB)
+        val publicKeyB = ECDHUtility.androidB64EncodedStrPKtoPK(b64EncodedStrPubKeyByB)
 
-        val secretKeyByA = ECDHGround.generateSharedSecret(keyPairByA.private, publicKeyB)
-        val secretKeyByB = ECDHGround.generateSharedSecret(keyPairByB.private, pubKeyByA)
+        val secretKeyByA = ECDHUtility.generateSharedSecret(keyPairByA.private, publicKeyB)
+        val secretKeyByB = ECDHUtility.generateSharedSecret(keyPairByB.private, pubKeyByA)
 
         val hashedByteArraySecretKeyByA =
-            ECDHGround.generateSecretKeyWithArgon2(secretKeyByA.encoded)
+            ECDHUtility.generateSecretKeyWithArgon2(secretKeyByA.encoded)
         val hashedByteArraySecretKeyByB =
-            ECDHGround.generateSecretKeyWithArgon2(secretKeyByB.encoded)
+            ECDHUtility.generateSecretKeyWithArgon2(secretKeyByB.encoded)
 
         val hashedSecretKeyByA = SecretKeySpec(
             hashedByteArraySecretKeyByA,
@@ -285,11 +285,11 @@ object MultiplatformSampleTests {
 
         val message = "Salam qaqaş, ürəyim çatdayır. What the heck 👾🍕🥞👾👾😂🤣"
 
-        val encryptedMessageByA = ECDHGround.encrypt(hashedSecretKeyByA, message)
-        val encryptedMessageByB = ECDHGround.encrypt(hashedSecretKeyByB, message)
+        val encryptedMessageByA = ECDHUtility.encrypt(hashedSecretKeyByA, message)
+        val encryptedMessageByB = ECDHUtility.encrypt(hashedSecretKeyByB, message)
 
-        val decryptedMessageByA = ECDHGround.decrypt(hashedSecretKeyByA, encryptedMessageByA)
-        val decryptedMessageByB = ECDHGround.decrypt(hashedSecretKeyByB, encryptedMessageByB)
+        val decryptedMessageByA = ECDHUtility.decrypt(hashedSecretKeyByA, encryptedMessageByA)
+        val decryptedMessageByB = ECDHUtility.decrypt(hashedSecretKeyByB, encryptedMessageByB)
 
         Log.i(TAG, "Encrypted Message: $encryptedMessageByA")
         Log.i(TAG, "Encrypted Message: $encryptedMessageByB")

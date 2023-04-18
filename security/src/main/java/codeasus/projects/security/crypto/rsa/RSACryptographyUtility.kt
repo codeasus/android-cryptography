@@ -1,4 +1,4 @@
-package codeasus.projects.encryption.crypto.rsa
+package codeasus.projects.security.crypto.rsa
 
 import android.content.Context
 import android.os.Build.VERSION

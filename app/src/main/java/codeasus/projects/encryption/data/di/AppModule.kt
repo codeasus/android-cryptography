@@ -2,10 +2,10 @@ package codeasus.projects.encryption.data.di
 
 import android.app.Application
 import androidx.room.Room
-import codeasus.projects.encryption.data.dao.CryptographyDAO
+import codeasus.projects.security.data.dao.CryptographyDAO
 import codeasus.projects.encryption.data.db.AndroidCryptographyDatabase
-import codeasus.projects.encryption.data.repository.CryptographyRepository
-import codeasus.projects.encryption.data.repository.CryptographyRepositoryImpl
+import codeasus.projects.security.data.repository.CryptographyRepository
+import codeasus.projects.security.data.repository.impl.CryptographyRepositoryImpl
 import codeasus.projects.encryption.data.util.DatabaseConstants
 import dagger.Module
 import dagger.Provides
