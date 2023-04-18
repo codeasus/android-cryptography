@@ -27,22 +27,20 @@ object RSACryptographyUtility {
     private const val STRING_ERROR_KEYPAIR = "Encryption/Decryption KeyPair has not been generated"
     private const val STRING_ERROR_DELETE_CERTIFICATE = "Public Key Certificate could not be deleted"
 
-    private const val TAG = "DBG@RSACryptoUtil"
+    private val TAG = "DBG@CRYPTO@${RSACryptographyUtility::class.java}"
 
     // b64, B64 -> base64, Base64
 
     fun generateKeyPair() {
-        if (VERSION.SDK_INT >= VERSION_CODES.M) {
-            val kPG = KeyPairGenerator.getInstance(KeyProperties.KEY_ALGORITHM_RSA, PROVIDER_ANDROID_KEY_STORE)
-            val kGPS = KeyGenParameterSpec
-                .Builder(KEYSTORE_ALIAS_RSA, KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT)
-                .setKeySize(2048)
-                .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_RSA_PKCS1)
-                .build()
+        val kPG = KeyPairGenerator.getInstance(KeyProperties.KEY_ALGORITHM_RSA, PROVIDER_ANDROID_KEY_STORE)
+        val kGPS = KeyGenParameterSpec
+            .Builder(KEYSTORE_ALIAS_RSA, KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT)
+            .setKeySize(2048)
+            .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_RSA_PKCS1)
+            .build()
 
-            kPG.initialize(kGPS)
-            kPG.generateKeyPair()
-        }
+        kPG.initialize(kGPS)
+        kPG.generateKeyPair()
     }
 
     fun generatePubKeyCertificate(context: Context) {

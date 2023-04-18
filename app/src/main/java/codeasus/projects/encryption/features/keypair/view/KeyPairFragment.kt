@@ -16,7 +16,7 @@ import codeasus.projects.encryption.R
 import codeasus.projects.encryption.databinding.FragmentKeyPairBinding
 import codeasus.projects.encryption.features.keypair.adapter.KeyPairAdapter
 import codeasus.projects.encryption.features.keypair.viewmodel.KeyPairViewModel
-import codeasus.projects.security.multiplatform.MultiplatformSampleTests
+import codeasus.projects.security.multiplatform.MultiplatformCryptography
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -47,13 +47,13 @@ class KeyPairFragment : Fragment() {
 //        MultiplatformSampleTests.testMessageCryptographyWithArgon2()
         val threadForHKDF = Thread {
             val numberOfCycles = 500
-            val res = MultiplatformSampleTests.benchmarkHKDF(numberOfCycles)
+            val res = MultiplatformCryptography.benchmarkHKDF(numberOfCycles)
             Log.i(TAG, "Based on $numberOfCycles cycles, average single HKDF hash generation time: ${res}Ns")
         }
         threadForHKDF.start()
         val threadForArgon2 = Thread {
             val numberOfCycles = 10
-            val res = MultiplatformSampleTests.benchmarkArgon2(numberOfCycles)
+            val res = MultiplatformCryptography.benchmarkArgon2(numberOfCycles)
             Log.i(TAG, "Result of generating Argon2 hashes in $numberOfCycles cycles.")
             val sortedRes = res.entries.sortedBy { it.value }
             sortedRes.forEach { entry ->

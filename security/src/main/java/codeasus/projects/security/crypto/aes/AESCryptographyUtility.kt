@@ -14,22 +14,17 @@ object AESCryptographyUtility {
     private const val KEY_SIZE_AES = 256
     private const val IV_BYTE_ARRAY_LENGTH = 16
 
-    @Suppress("unused")
-    private const val TAG = "DBG@AESCryptoUtil"
+    private val TAG = "DBG@CRYPTO@${AESCryptographyUtility::class.java}"
 
     // b64, B64 -> base64, Base64
 
-    fun getSKAndIVPair(): Pair<SecretKey, IvParameterSpec> {
-        return Pair(generateSK(), generateIV())
-    }
-
-    private fun generateSK(): SecretKey {
+    fun generateSK(): SecretKey {
         val kG = KeyGenerator.getInstance(ALGORITHM_TYPE)
         kG.init(KEY_SIZE_AES, SecureRandom())
         return kG.generateKey()
     }
 
-    private fun generateIV(): IvParameterSpec {
+    fun generateIV(): IvParameterSpec {
         val iV = ByteArray(IV_BYTE_ARRAY_LENGTH)
         SecureRandom().nextBytes(iV)
         return IvParameterSpec(iV)
