@@ -17,6 +17,13 @@ object MultiplatformCryptography {
 
     private val TAG = "DBG@CRYPTO_TEST@${MultiplatformCryptography::class.java}"
 
+    const val message =
+        """
+           Salam qaqaş, ürəyim çatdayır, I don’t understand. 
+           Please repeat. – Не понимаю.
+           Повторите пожалуйста üeç.ıəığölış 🥞🍺🍺🤣🤣❤ 
+        """
+
     private val iosPublicKeys = arrayOf(
         "BDzBIx5p8ez9KmthwDJ+N+tCw+/3j/xdMUL7hAcuCtqJHMVZqD1RoIJ3oKSoJ7qYTkwtoLMavYHBrfRVb9+s0wI=",
         "BCYUx+eUcq2mPnaOmS/lTZ75rrtLRgTF3A6NznkwhRTVVnr+1bJowRvHOmhIH/5sE6v8CdNjr1534Ewqg+hfylY=",
@@ -206,7 +213,7 @@ object MultiplatformCryptography {
         Log.w(TAG, Base64.encodeToString(hashedByteArraySecretKeyByB, Base64.NO_WRAP))
     }
 
-    fun testMessageCryptographyWithHKDF() {
+    fun testMessageCryptographyWithHKDF(message: String) {
         val keyPairByA = ECDHUtility.generateECKeys()
         val b64EncodedStrPubKeyByA =
             Base64.encodeToString(keyPairByA.public.encoded, Base64.NO_WRAP)
@@ -239,9 +246,6 @@ object MultiplatformCryptography {
             "AES"
         )
 
-        val message =
-            "I don’t understand. Please repeat. – Не понимаю. Повторите пожалуйста üeç.ıəığölış 🥞🍺🍺🤣🤣❤"
-
         val encryptedMessageByA = ECDHUtility.encrypt(hashedSecretKeyByA, message)
         val encryptedMessageByB = ECDHUtility.encrypt(hashedSecretKeyByB, message)
 
@@ -255,7 +259,7 @@ object MultiplatformCryptography {
         Log.w(TAG, "Decrypted Message: $decryptedMessageByB")
     }
 
-    fun testMessageCryptographyWithArgon2() {
+    fun testMessageCryptographyWithArgon2(message: String) {
         val keyPairByA = ECDHUtility.generateECKeys()
         val b64EncodedStrPubKeyByA =
             Base64.encodeToString(keyPairByA.public.encoded, Base64.NO_WRAP)
@@ -288,29 +292,27 @@ object MultiplatformCryptography {
             "AES"
         )
 
-        val message = "Salam qaqaş, ürəyim çatdayır. What the heck 👾🍕🥞👾👾😂🤣"
+        val cipherMessageByA = ECDHUtility.encrypt(hashedSecretKeyByA, message)
+        val cipherMessageByB = ECDHUtility.encrypt(hashedSecretKeyByB, message)
 
-        val encryptedMessageByA = ECDHUtility.encrypt(hashedSecretKeyByA, message)
-        val encryptedMessageByB = ECDHUtility.encrypt(hashedSecretKeyByB, message)
+        val decryptedMessageByA = ECDHUtility.decrypt(hashedSecretKeyByA, cipherMessageByA)
+        val decryptedMessageByB = ECDHUtility.decrypt(hashedSecretKeyByB, cipherMessageByB)
 
-        val decryptedMessageByA = ECDHUtility.decrypt(hashedSecretKeyByA, encryptedMessageByA)
-        val decryptedMessageByB = ECDHUtility.decrypt(hashedSecretKeyByB, encryptedMessageByB)
-
-        Log.i(TAG, "Encrypted Message: $encryptedMessageByA")
-        Log.i(TAG, "Encrypted Message: $encryptedMessageByB")
+        Log.i(TAG, "Encrypted Message: $cipherMessageByA")
+        Log.i(TAG, "Encrypted Message: $cipherMessageByB")
 
         Log.i(TAG, "Decrypted Message: $decryptedMessageByA")
         Log.i(TAG, "Decrypted Message: $decryptedMessageByB")
     }
 
     fun decryptIOSCipherData(
-        b64EncodedCipherData: String,
-        b64EncodedCipherSK: String,
-        b64EncodedCipherIV: String
-    ): String{
-        val decodedCipherData = Base64.decode(b64EncodedCipherData, Base64.NO_WRAP)
-        val decodedCipherSK = Base64.decode(b64EncodedCipherSK, Base64.NO_WRAP)
-        val decodedCipherIV = Base64.decode(b64EncodedCipherIV, Base64.NO_WRAP)
+        b64EncodedStrCipherData: String,
+        b64EncodedStrCipherSK: String,
+        b64EncodedStrCipherIV: String
+    ): String {
+        val decodedCipherData = Base64.decode(b64EncodedStrCipherData, Base64.NO_WRAP)
+        val decodedCipherSK = Base64.decode(b64EncodedStrCipherSK, Base64.NO_WRAP)
+        val decodedCipherIV = Base64.decode(b64EncodedStrCipherIV, Base64.NO_WRAP)
 
         val decryptedSK = RSACryptographyUtility.decrypt(decodedCipherSK)
         val decryptedIV = RSACryptographyUtility.decrypt(decodedCipherIV)
@@ -327,12 +329,12 @@ object MultiplatformCryptography {
     }
 
     fun encryptDataForIOS(
-        data: String,
+        message: String,
         publicKey: PublicKey,
         secretKey: SecretKey,
         iv: IvParameterSpec
     ): String {
-        val encodedData = data.toByteArray(StandardCharsets.UTF_8)
+        val encodedData = message.toByteArray(StandardCharsets.UTF_8)
         val cipherData = AESCryptographyUtility.encrypt(encodedData, secretKey, iv)
         val b64EncodedCipherData = Base64.encodeToString(cipherData, Base64.NO_WRAP)
 
@@ -341,7 +343,6 @@ object MultiplatformCryptography {
 
         val b64EncodedEncryptedSK = Base64.encodeToString(encryptedSK, Base64.NO_WRAP)
         val b64EncodedEncryptedIV = Base64.encodeToString(encryptedIV, Base64.NO_WRAP)
-
 
         Log.d(TAG, "b64EncodedEncryptedData: $b64EncodedCipherData;")
         Log.d(TAG, "b64EncodedEncryptedSK: $b64EncodedEncryptedSK;")
