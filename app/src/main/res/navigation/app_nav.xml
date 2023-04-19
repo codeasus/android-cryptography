@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/publicKeyFragment"
-        android:name="codeasus.projects.encryption.features.keypair.view.KeyPairFragment"
+        android:name="codeasus.projects.app.features.keypair.view.KeyPairFragment"
         android:label="fragment_public_key"
         tools:layout="@layout/fragment_key_pair" >
         <action
@@ -16,7 +16,7 @@
     </fragment>
     <fragment
         android:id="@+id/mainFragment"
-        android:name="codeasus.projects.encryption.features.main.view.MainFragment"
+        android:name="codeasus.projects.app.features.main.view.MainFragment"
         android:label="fragment_main"
         tools:layout="@layout/fragment_main" >
         <action
