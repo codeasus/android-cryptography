@@ -1,6 +1,6 @@
-package codeasus.projects.security.data.repository
+package codeasus.projects.data.features.security.repository
 
-import codeasus.projects.security.data.entity.EllipticCurveKeyPairEntity
+import codeasus.projects.data.features.security.entity.EllipticCurveKeyPairEntity
 import kotlinx.coroutines.flow.Flow
 
 interface CryptographyRepository {

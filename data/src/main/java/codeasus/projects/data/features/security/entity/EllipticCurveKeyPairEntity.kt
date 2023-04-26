@@ -1,9 +1,9 @@
-package codeasus.projects.security.data.entity
+package codeasus.projects.data.features.security.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import codeasus.projects.security.data.util.DatabaseConstants
+import codeasus.projects.data.features.security.util.DatabaseConstants
 
 @Entity(tableName = DatabaseConstants.ENTITY_ELLIPTIC_CURVE_KEY_PAIR)
 data class EllipticCurveKeyPairEntity(

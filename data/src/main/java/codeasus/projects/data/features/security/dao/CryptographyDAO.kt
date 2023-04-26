@@ -1,11 +1,11 @@
-package codeasus.projects.security.data.dao
+package codeasus.projects.data.features.security.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import codeasus.projects.security.data.entity.EllipticCurveKeyPairEntity
-import codeasus.projects.security.data.util.DatabaseConstants
+import codeasus.projects.data.features.security.entity.EllipticCurveKeyPairEntity
+import codeasus.projects.data.features.security.util.DatabaseConstants
 import kotlinx.coroutines.flow.Flow
 
 @Dao

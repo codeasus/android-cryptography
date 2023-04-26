@@ -6,9 +6,8 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import codeasus.projects.security.crypto.ecdh.ECDHUtility
 import codeasus.projects.security.crypto.keystore.AndroidKeystore
-import codeasus.projects.security.data.entity.EllipticCurveKeyPairEntity
 import codeasus.projects.app.data.model.features.keypair.KeyPair
-import codeasus.projects.security.data.repository.CryptographyRepository
+import codeasus.projects.data.features.security.repository.CryptographyRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -43,7 +42,7 @@ class KeyPairViewModel @Inject constructor(
     }
 
     fun generateECKeyPairs(size: Int = 10) = viewModelScope.launch(Dispatchers.IO) {
-        val ecKeyPairSet: MutableSet<EllipticCurveKeyPairEntity> = mutableSetOf()
+        val ecKeyPairSet: MutableSet<codeasus.projects.data.features.security.entity.EllipticCurveKeyPairEntity> = mutableSetOf()
         for (i in 0 until size) {
             val ecKeyPair = ECDHUtility.generateECKeys()
             val b64EncodedPubKey =
@@ -54,7 +53,7 @@ class KeyPairViewModel @Inject constructor(
                     Base64.NO_WRAP
                 )
             ecKeyPairSet.add(
-                EllipticCurveKeyPairEntity(
+                codeasus.projects.data.features.security.entity.EllipticCurveKeyPairEntity(
                     0,
                     b64EncodedPubKey,
                     b64EncodedDecryptedPriKey

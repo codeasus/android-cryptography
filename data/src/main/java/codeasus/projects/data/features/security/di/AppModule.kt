@@ -1,12 +1,9 @@
-package codeasus.projects.app.data.di
+package codeasus.projects.data.features.security.di
 
 import android.app.Application
 import androidx.room.Room
-import codeasus.projects.security.data.dao.CryptographyDAO
-import codeasus.projects.app.data.db.AndroidCryptographyDatabase
-import codeasus.projects.security.data.repository.CryptographyRepository
-import codeasus.projects.security.data.repository.impl.CryptographyRepositoryImpl
-import codeasus.projects.app.data.util.DatabaseConstants
+import codeasus.projects.data.features.security.db.AndroidCryptographyDatabase
+import codeasus.projects.data.features.security.util.DatabaseConstants
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -19,14 +16,16 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun providesCryptographyDAO(db: AndroidCryptographyDatabase): CryptographyDAO {
+    fun providesCryptographyDAO(db: AndroidCryptographyDatabase): codeasus.projects.data.features.security.dao.CryptographyDAO {
         return db.cryptographyDAO()
     }
 
     @Provides
     @Singleton
-    fun providesCryptographyRepository(cryptographyDAO: CryptographyDAO): CryptographyRepository {
-        return CryptographyRepositoryImpl(cryptographyDAO)
+    fun providesCryptographyRepository(cryptographyDAO: codeasus.projects.data.features.security.dao.CryptographyDAO): codeasus.projects.data.features.security.repository.CryptographyRepository {
+        return codeasus.projects.data.features.security.repository.impl.CryptographyRepositoryImpl(
+            cryptographyDAO
+        )
     }
 
     @Provides

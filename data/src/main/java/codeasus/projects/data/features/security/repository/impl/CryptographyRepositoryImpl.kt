@@ -1,8 +1,8 @@
-package codeasus.projects.security.data.repository.impl
+package codeasus.projects.data.features.security.repository.impl
 
-import codeasus.projects.security.data.dao.CryptographyDAO
-import codeasus.projects.security.data.entity.EllipticCurveKeyPairEntity
-import codeasus.projects.security.data.repository.CryptographyRepository
+import codeasus.projects.data.features.security.dao.CryptographyDAO
+import codeasus.projects.data.features.security.entity.EllipticCurveKeyPairEntity
+import codeasus.projects.data.features.security.repository.CryptographyRepository
 import kotlinx.coroutines.flow.Flow
 
 class CryptographyRepositoryImpl(
