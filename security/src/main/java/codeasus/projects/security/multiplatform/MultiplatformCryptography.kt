@@ -96,17 +96,17 @@ object MultiplatformCryptography {
             for (threadCount in numberOfThreads) {
                 for (iterationCount in numberOfIterations) {
                     val startTimeInNs = System.nanoTime()
+                    val argon2Gen = Argon2BytesGenerator().apply {
+                        init(
+                            Argon2Parameters.Builder(Argon2Parameters.ARGON2_id)
+                                .withMemoryAsKB(allocatedMemory)
+                                .withParallelism(threadCount)
+                                .withIterations(iterationCount)
+                                .build()
+                        )
+                    }
                     for (i in 0 until cycles) {
                         Log.d(TAG, "Generating: {$allocatedMemory, $threadCount, $iterationCount}")
-                        val argon2Gen = Argon2BytesGenerator().apply {
-                            init(
-                                Argon2Parameters.Builder(Argon2Parameters.ARGON2_id)
-                                    .withMemoryAsKB(allocatedMemory)
-                                    .withParallelism(threadCount)
-                                    .withIterations(iterationCount)
-                                    .build()
-                            )
-                        }
                         argon2Gen.generateBytes("password".toByteArray(), ByteArray(32))
                     }
                     val elapsedTimeInNs = System.nanoTime() - startTimeInNs
