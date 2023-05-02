@@ -43,24 +43,25 @@ class KeyPairFragment : Fragment() {
         mBinding = FragmentKeyPairBinding.inflate(inflater, container, false)
         mNavController = findNavController()
         mMenuHost = requireActivity()
+        MultiplatformCryptography.testMessageCryptographyWithArgon2("Message 🍺🍺🍺🍺🍺")
 //        MultiplatformSampleTests.testMessageCryptographyWithHKDF()
 //        MultiplatformSampleTests.testMessageCryptographyWithArgon2()
-        val threadForHKDF = Thread {
-            val numberOfCycles = 500
-            val res = MultiplatformCryptography.benchmarkHKDF(numberOfCycles)
-            Log.i(TAG, "Based on $numberOfCycles cycles, average single HKDF hash generation time: ${res}Ns")
-        }
-        threadForHKDF.start()
-        val threadForArgon2 = Thread {
-            val numberOfCycles = 10
-            val res = MultiplatformCryptography.benchmarkArgon2(numberOfCycles)
-            Log.i(TAG, "Result of generating Argon2 hashes in $numberOfCycles cycles.")
-            val sortedRes = res.entries.sortedBy { it.value }
-            sortedRes.forEach { entry ->
-                Log.w(TAG, "${entry.key}: ${entry.value}")
-            }
-        }
-        threadForArgon2.start()
+//        val threadForHKDF = Thread {
+//            val numberOfCycles = 500
+//            val res = MultiplatformCryptography.benchmarkHKDF(numberOfCycles)
+//            Log.i(TAG, "Based on $numberOfCycles cycles, average single HKDF hash generation time: ${res}Ns")
+//        }
+//        threadForHKDF.start()
+//        val threadForArgon2 = Thread {
+//            val numberOfCycles = 10
+//            val res = MultiplatformCryptography.benchmarkArgon2(numberOfCycles)
+//            Log.i(TAG, "Result of generating Argon2 hashes in $numberOfCycles cycles.")
+//            val sortedRes = res.entries.sortedBy { it.value }
+//            sortedRes.forEach { entry ->
+//                Log.w(TAG, "${entry.key}: ${entry.value}")
+//            }
+//        }
+//        threadForArgon2.start()
         setData()
         setView()
         return mBinding.root

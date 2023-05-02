@@ -75,6 +75,12 @@ object ECDHUtility {
         return keyAgreement.generateSecret("AES")
     }
 
+    fun b64EncodedStrPKtoPriKey(b64EncodedPK: String): PrivateKey {
+        val keyFactory = KeyFactory.getInstance("EC")
+        val dataPK = Base64.decode(b64EncodedPK, Base64.NO_WRAP)
+        return keyFactory.generatePrivate(PKCS8EncodedKeySpec(dataPK))
+    }
+
     fun androidB64EncodedStrPKtoPK(androidB64EncodedPK: String): PublicKey {
         return KeyFactory.getInstance("EC")
             .generatePublic(X509EncodedKeySpec(Base64.decode(androidB64EncodedPK, Base64.NO_WRAP)))

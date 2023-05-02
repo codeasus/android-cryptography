@@ -15,7 +15,7 @@ import javax.crypto.spec.SecretKeySpec
 
 object MultiplatformCryptography {
 
-    private val TAG = "DBG@CRYPTO_TEST@${MultiplatformCryptography::class.java}"
+    private val TAG = "DBG@CRYPTO@${MultiplatformCryptography::class.java}"
 
     const val message =
         """
@@ -261,17 +261,19 @@ object MultiplatformCryptography {
 
     fun testMessageCryptographyWithArgon2(message: String) {
         val keyPairByA = ECDHUtility.generateECKeys()
-        val b64EncodedStrPubKeyByA =
-            Base64.encodeToString(keyPairByA.public.encoded, Base64.NO_WRAP)
+        val b64EncodedStrPubKeyByA = Base64.encodeToString(keyPairByA.public.encoded, Base64.NO_WRAP)
+        val b64EncodedStrPriKeyByA = Base64.encodeToString(keyPairByA.private.encoded, Base64.NO_WRAP)
         val pubKeyByA = ECDHUtility.androidB64EncodedStrPKtoPK(b64EncodedStrPubKeyByA)
+        val priKeyByA = ECDHUtility.b64EncodedStrPKtoPriKey(b64EncodedStrPriKeyByA)
 
         val keyPairByB = ECDHUtility.generateECKeys()
-        val b64EncodedStrPubKeyByB =
-            Base64.encodeToString(keyPairByB.public.encoded, Base64.NO_WRAP)
+        val b64EncodedStrPubKeyByB = Base64.encodeToString(keyPairByB.public.encoded, Base64.NO_WRAP)
+        val b64EncodedStrPriKeyByB = Base64.encodeToString(keyPairByB.private.encoded, Base64.NO_WRAP)
         val publicKeyB = ECDHUtility.androidB64EncodedStrPKtoPK(b64EncodedStrPubKeyByB)
+        val priKeyByB = ECDHUtility.b64EncodedStrPKtoPriKey(b64EncodedStrPriKeyByB)
 
-        val secretKeyByA = ECDHUtility.generateSharedSecret(keyPairByA.private, publicKeyB)
-        val secretKeyByB = ECDHUtility.generateSharedSecret(keyPairByB.private, pubKeyByA)
+        val secretKeyByA = ECDHUtility.generateSharedSecret(priKeyByA, publicKeyB)
+        val secretKeyByB = ECDHUtility.generateSharedSecret(priKeyByB, pubKeyByA)
 
         val hashedByteArraySecretKeyByA =
             ECDHUtility.generateSecretKeyWithArgon2(secretKeyByA.encoded)
