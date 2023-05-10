@@ -34,7 +34,6 @@ object ECDHUtility {
 
     private var iv = SecureRandom().generateSeed(16)
 
-
     fun generateSecretKeyWithHKDF(secretKeyEncoded: ByteArray): ByteArray {
         val data = ByteArray(32)
         val kdfBytesGenerator = HKDFBytesGenerator(SHA256Digest())
