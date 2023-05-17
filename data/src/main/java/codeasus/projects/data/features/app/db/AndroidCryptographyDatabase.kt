@@ -1,4 +1,4 @@
-package codeasus.projects.data.features.security.db
+package codeasus.projects.data.features.app.db
 
 import androidx.room.Database
 import androidx.room.RoomDatabase

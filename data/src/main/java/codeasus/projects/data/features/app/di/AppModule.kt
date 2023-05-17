@@ -1,8 +1,8 @@
-package codeasus.projects.data.features.security.di
+package codeasus.projects.data.features.app.di
 
 import android.app.Application
 import androidx.room.Room
-import codeasus.projects.data.features.security.db.AndroidCryptographyDatabase
+import codeasus.projects.data.features.app.db.AndroidCryptographyDatabase
 import codeasus.projects.data.features.security.util.DatabaseConstants
 import dagger.Module
 import dagger.Provides
