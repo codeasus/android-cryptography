@@ -9,7 +9,6 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import codeasus.projects.app.R
-import codeasus.projects.security.crypto.keystore.AndroidKeystore
 import codeasus.projects.app.databinding.FragmentMainBinding
 
 class MainFragment : Fragment() {
@@ -42,11 +41,6 @@ class MainFragment : Fragment() {
     }
 
     private fun setData() {
-        if (!AndroidKeystore.isAESKeyGenerated()) {
-            Log.d(TAG, "Could not find AES key, generating...")
-            AndroidKeystore.generateSecretAESKey()
-        } else {
-            Log.d(TAG, "AES key exists.")
-        }
+
     }
 }

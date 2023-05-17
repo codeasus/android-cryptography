@@ -7,6 +7,7 @@ import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import android.util.Base64
 import android.util.Log
+import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.io.IOException
 import java.security.*
@@ -17,8 +18,8 @@ import java.security.spec.X509EncodedKeySpec
 import javax.crypto.Cipher
 
 object RSACryptographyUtility {
-    private const val KEYSTORE_ALIAS_RSA = "EnigmaApp_RSAKeyPairAlias"
-    private const val PROVIDER_ANDROID_KEY_STORE = "AndroidKeyStore"
+    private const val KEYSTORE_ALIAS_RSA = "EnigmaApp_RSACryptoAlias"
+    private const val PROVIDER = "AndroidKeyStore"
     private const val ENCRYPTION_MODE_RSA_ECB_PKCS1_PADDING = "RSA/ECB/PKCS1Padding"
     private const val ALGORITHM_TYPE = "RSA"
 
@@ -27,14 +28,18 @@ object RSACryptographyUtility {
     private const val STRING_ERROR_KEYPAIR = "Encryption/Decryption KeyPair has not been generated"
     private const val STRING_ERROR_DELETE_CERTIFICATE = "Public Key Certificate could not be deleted"
 
-    private val TAG = "DBG@CRYPTO@${RSACryptographyUtility::class.java}"
+    private val TAG = "DBG@CRYPTO@${RSACryptographyUtility::class.java.name}"
 
     // b64, B64 -> base64, Base64
+    // data -> ByteArray
 
     fun generateKeyPair() {
-        val kPG = KeyPairGenerator.getInstance(KeyProperties.KEY_ALGORITHM_RSA, PROVIDER_ANDROID_KEY_STORE)
+        val kPG = KeyPairGenerator.getInstance(KeyProperties.KEY_ALGORITHM_RSA, PROVIDER)
         val kGPS = KeyGenParameterSpec
-            .Builder(KEYSTORE_ALIAS_RSA, KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT)
+            .Builder(
+                KEYSTORE_ALIAS_RSA,
+                KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT
+            )
             .setKeySize(2048)
             .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_RSA_PKCS1)
             .build()
@@ -43,16 +48,27 @@ object RSACryptographyUtility {
         kPG.generateKeyPair()
     }
 
-    fun generatePubKeyCertificate(context: Context) {
+    private fun getKeyStore(): KeyStore {
+        return KeyStore.getInstance(PROVIDER).apply {
+            load(null)
+        }
+    }
+
+    fun isKeyGenerated(): Boolean {
+        return getKeyStore().containsAlias(KEYSTORE_ALIAS_RSA)
+    }
+
+    @Throws(RuntimeException::class)
+    fun generatePubKeyCertificate(ctx: Context) {
         val ks = getKeyStore()
         if (ks.containsAlias(KEYSTORE_ALIAS_RSA)) {
             val pk: PublicKey = getPublicKey()
             var fOS: FileOutputStream? = null
             try {
-                fOS = context.openFileOutput(FILE_RSA_PUBLIC_KEY, Context.MODE_APPEND)
+                fOS = ctx.openFileOutput(FILE_RSA_PUBLIC_KEY, Context.MODE_APPEND)
                 fOS.write(pk.encoded)
             } catch (e: IOException) {
-                e.message?.let { Log.d(TAG, it) }
+                e.message?.let { Log.e(TAG, it) }
             } finally {
                 fOS?.close()
             }
@@ -60,24 +76,29 @@ object RSACryptographyUtility {
         throw RuntimeException(STRING_ERROR_KEYPAIR)
     }
 
-    fun deletePubKeyCertificate(context: Context) {
-        if (!context.deleteFile(FILE_RSA_PUBLIC_KEY)) {
+    @Throws(RuntimeException::class, FileNotFoundException::class)
+    fun deletePubKeyCertificate(ctx: Context) {
+        if (!ctx.deleteFile(FILE_RSA_PUBLIC_KEY)) {
             throw RuntimeException(STRING_ERROR_DELETE_CERTIFICATE)
         }
     }
 
+    @Throws(RuntimeException::class)
     fun getPubKeyCertificateAsX509(): X509Certificate {
-        val kS = getKeyStore()
-        if (kS.containsAlias(KEYSTORE_ALIAS_RSA)) {
-            return kS.getCertificate(KEYSTORE_ALIAS_RSA) as X509Certificate
+        getKeyStore().run {
+            if (this.containsAlias(KEYSTORE_ALIAS_RSA)) {
+                return this.getCertificate(KEYSTORE_ALIAS_RSA) as X509Certificate
+            }
+            throw RuntimeException(STRING_ERROR_KEYPAIR)
         }
-        throw RuntimeException(STRING_ERROR_KEYPAIR)
     }
 
-    fun getPublicKey(): PublicKey {
-        return getKeyPair().public.also {
-            Log.d(TAG, " -> PK: ${pKToB64EncodedStr(it)};")
-        }
+    private fun getPublicKey(): PublicKey {
+        return getKeyPair().public
+    }
+
+    private fun getPrivateKey(): PrivateKey {
+        return getKeyPair().private
     }
 
     fun encrypt(data: ByteArray): ByteArray {
@@ -92,47 +113,34 @@ object RSACryptographyUtility {
         return cipher.doFinal(data)
     }
 
-    fun decrypt(data: ByteArray): ByteArray {
+    fun decrypt(cipherData: ByteArray): ByteArray {
         val cipher = Cipher.getInstance(ENCRYPTION_MODE_RSA_ECB_PKCS1_PADDING)
-        cipher.init(Cipher.DECRYPT_MODE, getPrivateKey())
-        return cipher.doFinal(data)
+        val priKey = getPrivateKey()
+        cipher.init(Cipher.DECRYPT_MODE, priKey)
+        return cipher.doFinal(cipherData)
     }
 
     private fun getKeyPair(): KeyPair {
-        val kS = getKeyStore()
-        if (kS.containsAlias(KEYSTORE_ALIAS_RSA)) {
-            val entry = kS.getEntry(KEYSTORE_ALIAS_RSA, null) as? KeyStore.PrivateKeyEntry
-            return KeyPair(entry?.certificate?.publicKey, entry?.privateKey)
-        }
-        throw RuntimeException(STRING_ERROR_KEYPAIR)
-    }
-
-    private fun getPrivateKey(): PrivateKey {
-        return getKeyPair().private
-    }
-
-    private fun getKeyStore(): KeyStore {
-        return KeyStore.getInstance(PROVIDER_ANDROID_KEY_STORE).apply {
-            load(null)
+        getKeyStore().run {
+            if (this.containsAlias(KEYSTORE_ALIAS_RSA)) {
+                val entry = this.getEntry(KEYSTORE_ALIAS_RSA, null) as? KeyStore.PrivateKeyEntry
+                return KeyPair(entry?.certificate?.publicKey, entry?.privateKey)
+            }
+            throw RuntimeException(STRING_ERROR_KEYPAIR)
         }
     }
 
-    fun iOSB64EncodedStrPKToPK(b64EncodedPK: String): PublicKey {
-        val decodedByteArrayPK = Base64.decode(b64EncodedPK, Base64.NO_WRAP)
-        val pkcs1PublicKey = org.bouncycastle.asn1.pkcs.RSAPublicKey.getInstance(decodedByteArrayPK)
+    fun iOSB64DataPubKeyToPubKey(dataPubKey: ByteArray): PublicKey {
+        val pkcs1PublicKey = org.bouncycastle.asn1.pkcs.RSAPublicKey.getInstance(dataPubKey)
         val modulus = pkcs1PublicKey.modulus
         val publicExponent = pkcs1PublicKey.publicExponent
         val ks = RSAPublicKeySpec(modulus, publicExponent)
         return KeyFactory.getInstance(ALGORITHM_TYPE).generatePublic(ks) as RSAPublicKey
     }
 
-    fun androidB64EncodedStrPKToPK(b64EncodedPK: String): PublicKey {
+    fun dataPubKeyToPubKey(dataPubKey: ByteArray): PublicKey {
         return KeyFactory
             .getInstance(ALGORITHM_TYPE)
-            .generatePublic(X509EncodedKeySpec(Base64.decode(b64EncodedPK, Base64.NO_WRAP)))
-    }
-
-    private fun pKToB64EncodedStr(pK: PublicKey): String {
-        return Base64.encodeToString(pK.encoded, Base64.NO_WRAP)
+            .generatePublic(X509EncodedKeySpec(dataPubKey))
     }
 }

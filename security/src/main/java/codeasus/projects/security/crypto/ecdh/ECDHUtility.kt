@@ -32,17 +32,21 @@ object ECDHUtility {
 //    2. Derive a new key from KDF that your shared secret key is passed in as an argument.
 //    3. Either encrypt the secret key and store it in a column in local database or generate it everytime on conversion screen.
 
-    private var iv = SecureRandom().generateSeed(16)
+    // b64, B64 -> base64, Base64
+    // data -> ByteArray
 
-    fun generateSecretKeyWithHKDF(secretKeyEncoded: ByteArray): ByteArray {
+    private val TAG = "DBG@CRYPTO@${ECDHUtility::class.java.name}"
+    private const val CURVE_NAME = "secp256r1"
+
+    fun generateSecKeyWithHKDF(dataSecKey: ByteArray): ByteArray {
         val data = ByteArray(32)
         val kdfBytesGenerator = HKDFBytesGenerator(SHA256Digest())
-        kdfBytesGenerator.init(HKDFParameters(secretKeyEncoded, null, null))
+        kdfBytesGenerator.init(HKDFParameters(dataSecKey, null, null))
         kdfBytesGenerator.generateBytes(data, 0, 32)
         return data
     }
 
-    fun generateSecretKeyWithArgon2(secretKeyEncoded: ByteArray): ByteArray {
+    fun generateSecKeyWithArgon2(dataSecretKey: ByteArray): ByteArray {
         val hash = ByteArray(32)
         val numberOfThreads = 1
         val memory = 8192
@@ -56,44 +60,40 @@ object ECDHUtility {
                     .build()
             )
         }
-        argon2Generator.generateBytes(secretKeyEncoded, hash)
+        argon2Generator.generateBytes(dataSecretKey, hash)
         return hash
     }
 
     fun generateECKeys(): KeyPair {
-        val ecGenParameterSpec = ECGenParameterSpec("secp256r1")
+        val ecGenParameterSpec = ECGenParameterSpec(CURVE_NAME)
         val keyPairGenerator = KeyPairGenerator.getInstance("EC")
         keyPairGenerator.initialize(ecGenParameterSpec)
         return keyPairGenerator.generateKeyPair()
     }
 
-    fun generateSharedSecret(privateKey: PrivateKey?, publicKey: PublicKey?): SecretKey {
+    fun generateSharedSecKey(priKey: PrivateKey?, pubKey: PublicKey?): SecretKey {
         val keyAgreement = KeyAgreement.getInstance("ECDH")
-        keyAgreement.init(privateKey)
-        keyAgreement.doPhase(publicKey, true)
+        keyAgreement.init(priKey)
+        keyAgreement.doPhase(pubKey, true)
         return keyAgreement.generateSecret("AES")
     }
 
-    fun b64EncodedStrPKtoPriKey(b64EncodedPK: String): PrivateKey {
-        val keyFactory = KeyFactory.getInstance("EC")
-        val dataPK = Base64.decode(b64EncodedPK, Base64.NO_WRAP)
-        return keyFactory.generatePrivate(PKCS8EncodedKeySpec(dataPK))
+    fun dataPubKeyToPubKey(dataPubKey: ByteArray): PublicKey {
+        return KeyFactory.getInstance("EC").generatePublic(X509EncodedKeySpec(dataPubKey))
     }
 
-    fun androidB64EncodedStrPKtoPK(androidB64EncodedPK: String): PublicKey {
-        return KeyFactory.getInstance("EC")
-            .generatePublic(X509EncodedKeySpec(Base64.decode(androidB64EncodedPK, Base64.NO_WRAP)))
+    fun dataPriKeyToPriKey(dataPriKey: ByteArray): PrivateKey {
+        return KeyFactory.getInstance("EC").generatePrivate(PKCS8EncodedKeySpec(dataPriKey))
     }
 
-    fun iosB64EncodedStrPKToPK(iosB64EncodedPK: String): PublicKey {
+    fun iOSB64StrPubKeyToPubKey(dataPubKey: ByteArray): PublicKey {
         // Bc,bC  -> BouncyCastle
         // EC  -> Elliptic Curve
         // p,P -> Point
         // j,J -> Java (Standard Java Version), meaning it is specific to standard Java
-        val decodedPK = Base64.decode(iosB64EncodedPK, Base64.NO_WRAP)
         val x9ECParamSpec = SECNamedCurves.getByName("secp256r1")
         val curve = x9ECParamSpec.curve
-        val bCECPoint = curve.decodePoint(decodedPK)
+        val bCECPoint = curve.decodePoint(dataPubKey)
         val affineXOnBCEC = bCECPoint.affineXCoord.toBigInteger()
         val affineYOnBCEC = bCECPoint.affineYCoord.toBigInteger()
         val gBcEC = x9ECParamSpec.g
@@ -128,32 +128,28 @@ object ECDHUtility {
         return ecParams.curve
     }
 
-    fun encrypt(key: SecretKey?, plainText: String): String {
-        val ivSpec = IvParameterSpec(iv)
+    fun encrypt(data: ByteArray, secKey: SecretKeySpec): ByteArray {
         val cipher = Cipher.getInstance("AES/GCM/NoPadding")
-        val plainTextBytes = plainText.toByteArray(charset("UTF-8"))
-        cipher.init(Cipher.ENCRYPT_MODE, key, ivSpec)
-        val cipherText = ByteArray(cipher.getOutputSize(plainTextBytes.size))
+        cipher.init(Cipher.ENCRYPT_MODE, secKey)
+        val cipherData = ByteArray(cipher.getOutputSize(data.size))
         var encryptLength = cipher.update(
-            plainTextBytes, 0,
-            plainTextBytes.size, cipherText, 0
+            data, 0,
+            data.size, cipherData, 0
         )
-        encryptLength += cipher.doFinal(cipherText, encryptLength)
-        return Base64.encodeToString(cipherText, Base64.NO_WRAP)
+        encryptLength += cipher.doFinal(cipherData, encryptLength)
+        return cipherData
     }
 
-    fun decrypt(key: SecretKey?, cipherText: String?): String {
-        val decryptionKey: Key = SecretKeySpec(key!!.encoded, key.algorithm)
-        val ivSpec = IvParameterSpec(iv)
+    fun decrypt(cipherData: ByteArray, secKey: SecretKeySpec): ByteArray {
+        val decryptionKey: Key = SecretKeySpec(secKey.encoded, secKey.algorithm)
         val cipher = Cipher.getInstance("AES/GCM/NoPadding")
-        val cipherTextBytes = Base64.decode(cipherText, Base64.NO_WRAP)
-        cipher.init(Cipher.DECRYPT_MODE, decryptionKey, ivSpec)
-        val plainText = ByteArray(cipher.getOutputSize(cipherTextBytes.size))
+        cipher.init(Cipher.DECRYPT_MODE, decryptionKey)
+        val data = ByteArray(cipher.getOutputSize(cipherData.size))
         var decryptLength = cipher.update(
-            cipherTextBytes, 0,
-            cipherTextBytes.size, plainText, 0
+            cipherData, 0,
+            cipherData.size, data, 0
         )
-        decryptLength += cipher.doFinal(plainText, decryptLength)
-        return String(plainText, StandardCharsets.UTF_8)
+        decryptLength += cipher.doFinal(data, decryptLength)
+        return data
     }
 }
