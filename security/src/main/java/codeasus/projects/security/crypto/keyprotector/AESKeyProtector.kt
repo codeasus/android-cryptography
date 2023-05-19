@@ -17,7 +17,11 @@ object AESKeyProtector: KeyProtector {
 
     private val TAG = "DBG@CRYPTO@${AESKeyProtector::class.java.name}"
 
-    fun generateSecretKey() {
+    override fun init() {
+        generateSecretKey()
+    }
+
+    private fun generateSecretKey() {
         val keyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, PROVIDER)
         val keyGenParameterSpec = KeyGenParameterSpec
             .Builder(KEYSTORE_ALIAS_AES, KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT)

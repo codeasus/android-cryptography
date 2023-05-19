@@ -1,4 +1,4 @@
-package codeasus.projects.data.features.security.util
+package codeasus.projects.data.features.app.util
 
 object DatabaseConstants {
     const val DATABASE_NAME = "android_cryptography_db"

@@ -1,20 +1,20 @@
-package codeasus.projects.app.features.keypair.adapter
+package codeasus.projects.app.features.security.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import codeasus.projects.app.data.model.features.keypair.KeyPair
+import codeasus.projects.data.features.security.model.EllipticCurveKeyPair
 import codeasus.projects.app.databinding.RvListItemKeypairBinding
 
-class KeyPairAdapter(val onKeyPairClicked: (KeyPair) -> Unit) :
+class KeyPairAdapter(val onKeyPairClicked: (EllipticCurveKeyPair) -> Unit) :
     RecyclerView.Adapter<KeyPairAdapter.ViewHolder>() {
 
-    private var oldKeyPairs = emptyList<KeyPair>()
+    private var oldEllipticCurveKeyPairs = emptyList<EllipticCurveKeyPair>()
 
     private class KeyPairDiffUtil(
-        private val oldList: List<KeyPair>,
-        private val newList: List<KeyPair>
+        private val oldList: List<EllipticCurveKeyPair>,
+        private val newList: List<EllipticCurveKeyPair>
     ) : DiffUtil.Callback() {
 
         override fun getOldListSize(): Int {
@@ -37,10 +37,10 @@ class KeyPairAdapter(val onKeyPairClicked: (KeyPair) -> Unit) :
     class ViewHolder(private val binding: RvListItemKeypairBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(keyPair: KeyPair) = binding.apply {
-            tvId.text = keyPair.id.toString()
-            tvPublicKey.text = keyPair.publicKey
-            tvPrivateKey.text = keyPair.privateKey
+        fun bind(EllipticCurveKeyPair: EllipticCurveKeyPair) = binding.apply {
+            tvId.text = EllipticCurveKeyPair.id.toString()
+            tvPublicKey.text = EllipticCurveKeyPair.publicKey
+            tvPrivateKey.text = EllipticCurveKeyPair.privateKey
         }
     }
 
@@ -54,17 +54,17 @@ class KeyPairAdapter(val onKeyPairClicked: (KeyPair) -> Unit) :
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(oldKeyPairs[position])
+        holder.bind(oldEllipticCurveKeyPairs[position])
     }
 
     override fun getItemCount(): Int {
-        return oldKeyPairs.size
+        return oldEllipticCurveKeyPairs.size
     }
 
-    fun setData(newKeyPairs: List<KeyPair>) {
-        val diffUtil = KeyPairDiffUtil(oldKeyPairs, newKeyPairs)
+    fun setData(newEllipticCurveKeyPairs: List<EllipticCurveKeyPair>) {
+        val diffUtil = KeyPairDiffUtil(oldEllipticCurveKeyPairs, newEllipticCurveKeyPairs)
         val diffResult = DiffUtil.calculateDiff(diffUtil)
-        oldKeyPairs = newKeyPairs
+        oldEllipticCurveKeyPairs = newEllipticCurveKeyPairs
         diffResult.dispatchUpdatesTo(this)
     }
 }

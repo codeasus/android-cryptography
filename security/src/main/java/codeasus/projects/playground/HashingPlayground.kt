@@ -1,15 +1,11 @@
-package codeasus.projects.app.hash
-
-import android.os.Build
-import androidx.annotation.RequiresApi
+package codeasus.projects.playground
 
 object CONSTANTS {
     const val INT_BINARY_SIZE = 32
 }
 
-class NegativeNumberException : Exception()
+class NegativeNumberException : RuntimeException()
 
-@RequiresApi(Build.VERSION_CODES.O)
 fun main() {
 //     1   as 8bit :  0000 0001
 //     1   as 32bit:  0000 0000 0000 0000 0000 0000 0000 0001

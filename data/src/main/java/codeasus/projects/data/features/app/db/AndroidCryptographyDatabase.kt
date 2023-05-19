@@ -2,6 +2,7 @@ package codeasus.projects.data.features.app.db
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import codeasus.projects.data.features.security.dao.EllipticCurveKeyPairDAO
 import codeasus.projects.data.features.security.entity.EllipticCurveKeyPairEntity
 
 @Database(
@@ -12,5 +13,5 @@ import codeasus.projects.data.features.security.entity.EllipticCurveKeyPairEntit
     exportSchema = false
 )
 abstract class AndroidCryptographyDatabase : RoomDatabase() {
-    abstract fun cryptographyDAO(): codeasus.projects.data.features.security.dao.CryptographyDAO
+    abstract fun getEllipticCurveKeyPairDAO(): EllipticCurveKeyPairDAO
 }

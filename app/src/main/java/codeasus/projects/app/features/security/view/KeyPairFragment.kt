@@ -1,4 +1,4 @@
-package codeasus.projects.app.features.keypair.view
+package codeasus.projects.app.features.security.view
 
 import android.os.Bundle
 import android.view.*
@@ -13,8 +13,8 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import codeasus.projects.app.R
 import codeasus.projects.app.databinding.FragmentKeyPairBinding
-import codeasus.projects.app.features.keypair.adapter.KeyPairAdapter
-import codeasus.projects.app.features.keypair.viewmodel.KeyPairViewModel
+import codeasus.projects.app.features.security.adapter.KeyPairAdapter
+import codeasus.projects.app.features.security.viewmodel.KeyPairViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -63,14 +63,13 @@ class KeyPairFragment : Fragment() {
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 return when (menuItem.itemId) {
                     R.id.menu_key_pair_clean -> {
-                        viewModel.deleteAllECKeyPairs()
                         Toast.makeText(requireContext(), "Cleared key pairs", Toast.LENGTH_SHORT)
                             .show()
                         true
                     }
                     R.id.menu_key_pair_generate -> {
-                        Toast.makeText(requireContext(), "Generated key pairs", Toast.LENGTH_SHORT)
-                            .show()
+                        Toast.makeText(requireContext(), "Generated key pairs", Toast.LENGTH_SHORT).show()
+                        viewModel.generateEllipticCurveKeyPairs(5)
                         true
                     }
                     else -> false

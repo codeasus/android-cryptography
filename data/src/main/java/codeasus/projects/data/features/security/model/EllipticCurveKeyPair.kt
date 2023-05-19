@@ -1,8 +1,8 @@
-package codeasus.projects.app.data.model.features.keypair
+package codeasus.projects.data.features.security.model
 
 import java.util.Objects
 
-data class KeyPair(
+data class EllipticCurveKeyPair(
     val id: Long,
     val publicKey: String,
     val privateKey: String
@@ -14,7 +14,7 @@ data class KeyPair(
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other == null || javaClass != other.javaClass) return false
-        other as KeyPair
+        other as EllipticCurveKeyPair
         if (this.id == other.id &&
             this.publicKey == other.publicKey &&
             this.privateKey == other.privateKey

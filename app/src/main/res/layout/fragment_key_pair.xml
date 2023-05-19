@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="8dp"
-    tools:context=".features.keypair.view.KeyPairFragment">
+    tools:context=".features.security.view.KeyPairFragment">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_keypair"
@@ -25,7 +25,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="12dp"
-        android:hint="@string/id"
+        android:hint="@string/ec_key_pair_id"
         app:layout_constraintBottom_toTopOf="@id/btn_add"
         app:layout_constraintStart_toStartOf="parent">
 
