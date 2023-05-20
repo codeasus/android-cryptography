@@ -1,4 +1,4 @@
-package codeasus.projects.app.features.security.view
+package codeasus.projects.app.features.ecdh.view
 
 import android.os.Bundle
 import android.view.*
@@ -13,8 +13,8 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import codeasus.projects.app.R
 import codeasus.projects.app.databinding.FragmentEcKeyPairBinding
-import codeasus.projects.app.features.security.adapter.ECKeyPairAdapter
-import codeasus.projects.app.features.security.viewmodel.ECDHViewModel
+import codeasus.projects.app.features.ecdh.adapter.ECKeyPairAdapter
+import codeasus.projects.app.features.ecdh.viewmodel.ECDHViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch

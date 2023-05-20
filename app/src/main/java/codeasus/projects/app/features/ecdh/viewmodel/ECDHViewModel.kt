@@ -1,4 +1,4 @@
-package codeasus.projects.app.features.security.viewmodel
+package codeasus.projects.app.features.ecdh.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel

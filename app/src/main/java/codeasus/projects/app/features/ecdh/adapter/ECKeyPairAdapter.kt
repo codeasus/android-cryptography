@@ -1,4 +1,4 @@
-package codeasus.projects.app.features.security.adapter
+package codeasus.projects.app.features.ecdh.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

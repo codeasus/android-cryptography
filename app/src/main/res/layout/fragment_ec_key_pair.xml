@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="8dp"
-    tools:context=".features.security.view.ECDHFragment">
+    tools:context=".features.ecdh.view.ECDHFragment">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_keypair"

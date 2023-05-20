@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/ecdhFragment"
-        android:name="codeasus.projects.app.features.security.view.ECDHFragment"
+        android:name="codeasus.projects.app.features.ecdh.view.ECDHFragment"
         android:label="fragment_public_key"
         tools:layout="@layout/fragment_ec_key_pair" >
         <action
