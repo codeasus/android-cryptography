@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class KeyPairViewModel @Inject constructor(
+class ECDHViewModel @Inject constructor(
     application: Application,
     private val ellipticCurveKeyPairRepository: EllipticCurveKeyPairRepository,
     private val eCDHKeyManagementService: ECDHKeyManagementService

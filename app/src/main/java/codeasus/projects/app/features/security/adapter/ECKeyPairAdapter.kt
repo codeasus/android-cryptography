@@ -7,8 +7,8 @@ import androidx.recyclerview.widget.RecyclerView
 import codeasus.projects.data.features.security.model.EllipticCurveKeyPair
 import codeasus.projects.app.databinding.RvListItemKeypairBinding
 
-class KeyPairAdapter(val onKeyPairClicked: (EllipticCurveKeyPair) -> Unit) :
-    RecyclerView.Adapter<KeyPairAdapter.ViewHolder>() {
+class ECKeyPairAdapter(val onECKeyPairClicked: (EllipticCurveKeyPair) -> Unit) :
+    RecyclerView.Adapter<ECKeyPairAdapter.ViewHolder>() {
 
     private var oldEllipticCurveKeyPairs = emptyList<EllipticCurveKeyPair>()
 

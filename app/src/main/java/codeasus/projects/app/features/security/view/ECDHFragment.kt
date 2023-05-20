@@ -12,22 +12,22 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import codeasus.projects.app.R
-import codeasus.projects.app.databinding.FragmentKeyPairBinding
-import codeasus.projects.app.features.security.adapter.KeyPairAdapter
-import codeasus.projects.app.features.security.viewmodel.KeyPairViewModel
+import codeasus.projects.app.databinding.FragmentEcKeyPairBinding
+import codeasus.projects.app.features.security.adapter.ECKeyPairAdapter
+import codeasus.projects.app.features.security.viewmodel.ECDHViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class KeyPairFragment : Fragment() {
+class ECDHFragment : Fragment() {
 
-    private lateinit var mBinding: FragmentKeyPairBinding
+    private lateinit var mBinding: FragmentEcKeyPairBinding
     private lateinit var mNavController: NavController
     private lateinit var mMenuHost: MenuHost
-    private lateinit var mKeyPairAdapter: KeyPairAdapter
+    private lateinit var mECKeyPairAdapter: ECKeyPairAdapter
 
-    private val viewModel: KeyPairViewModel by viewModels()
+    private val viewModel: ECDHViewModel by viewModels()
 
     companion object {
         private const val TAG = "DBG@KeyPairFragment"
@@ -38,7 +38,7 @@ class KeyPairFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        mBinding = FragmentKeyPairBinding.inflate(inflater, container, false)
+        mBinding = FragmentEcKeyPairBinding.inflate(inflater, container, false)
         mNavController = findNavController()
         mMenuHost = requireActivity()
         setData()
@@ -47,12 +47,12 @@ class KeyPairFragment : Fragment() {
     }
 
     private fun setView() {
-        mKeyPairAdapter = KeyPairAdapter {
+        mECKeyPairAdapter = ECKeyPairAdapter {
 
         }
 
         mBinding.apply {
-            rvKeypair.adapter = mKeyPairAdapter
+            rvKeypair.adapter = mECKeyPairAdapter
         }
 
         mMenuHost.addMenuProvider(object : MenuProvider {
@@ -82,7 +82,7 @@ class KeyPairFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.ecKeyPairs.collectLatest {
                 it?.let {
-                    mKeyPairAdapter.setData(it)
+                    mECKeyPairAdapter.setData(it)
                 }
             }
         }

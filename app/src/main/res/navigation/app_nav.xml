@@ -6,10 +6,10 @@
     app:startDestination="@id/mainFragment">
 
     <fragment
-        android:id="@+id/publicKeyFragment"
-        android:name="codeasus.projects.app.features.security.view.KeyPairFragment"
+        android:id="@+id/ecdhFragment"
+        android:name="codeasus.projects.app.features.security.view.ECDHFragment"
         android:label="fragment_public_key"
-        tools:layout="@layout/fragment_key_pair" >
+        tools:layout="@layout/fragment_ec_key_pair" >
         <action
             android:id="@+id/publicKeyFragToMainFrag"
             app:destination="@id/mainFragment" />
@@ -21,6 +21,6 @@
         tools:layout="@layout/fragment_main" >
         <action
             android:id="@+id/mainFragToPublicKeyFrag"
-            app:destination="@id/publicKeyFragment" />
+            app:destination="@id/ecdhFragment" />
     </fragment>
 </navigation>
