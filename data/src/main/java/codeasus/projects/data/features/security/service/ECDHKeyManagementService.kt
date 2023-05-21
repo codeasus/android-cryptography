@@ -10,7 +10,7 @@ import javax.inject.Inject
 
 @ViewModelScoped
 class ECDHKeyManagementService @Inject constructor(
-    private val ellipticCurveKeyPairRepository: EllipticCurveKeyPairRepository,
+    private val eCKeyPairRepository: EllipticCurveKeyPairRepository,
     private val keyProtector: KeyProtector
 ) {
 
@@ -25,7 +25,7 @@ class ECDHKeyManagementService @Inject constructor(
             b64PubKey,
             b64PriKey
         )
-        ellipticCurveKeyPairRepository.insertEllipticCurveKeyPair(eCKeyPair)
+        eCKeyPairRepository.insertEllipticCurveKeyPair(eCKeyPair)
     }
 
     suspend fun generateEllipticCurveKeyPairs(count: Int) {
@@ -43,6 +43,10 @@ class ECDHKeyManagementService @Inject constructor(
                 )
             )
         }
-        ellipticCurveKeyPairRepository.insertEllipticCurveKeyPairs(ecKeyPairSet)
+        eCKeyPairRepository.insertEllipticCurveKeyPairs(ecKeyPairSet)
+    }
+
+    suspend fun deleteEllipticCurveKeyPairs() {
+        eCKeyPairRepository.deleteEllipticCurveKeyPairs()
     }
 }

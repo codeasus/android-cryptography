@@ -14,7 +14,7 @@ interface EllipticCurveKeyPairDAO {
     fun getEllipticCurveKeyPairByID(id: Long): EllipticCurveKeyPairEntity
 
     @Query("SELECT * FROM ${DatabaseConstants.ENTITY_ELLIPTIC_CURVE_KEY_PAIR}")
-    fun getEllipticCurveKeyPairs(): Flow<List<EllipticCurveKeyPairEntity>>
+    fun getEllipticCurveKeyPairs(): List<EllipticCurveKeyPairEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertEllipticCurveKeyPair(ellipticCurveKeyPairEntity: EllipticCurveKeyPairEntity): Long

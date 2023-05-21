@@ -1,4 +1,4 @@
-package codeasus.projects.app.features.ecdh.view
+package codeasus.projects.app.features.security.view
 
 import android.os.Bundle
 import android.view.*
@@ -8,26 +8,20 @@ import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import codeasus.projects.app.R
-import codeasus.projects.app.databinding.FragmentEcKeyPairBinding
-import codeasus.projects.app.features.ecdh.adapter.ECKeyPairAdapter
-import codeasus.projects.app.features.ecdh.viewmodel.ECDHViewModel
+import codeasus.projects.app.databinding.FragmentSecurityBinding
+import codeasus.projects.app.features.security.viewmodel.SecurityViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class ECDHFragment : Fragment() {
-
-    private lateinit var mBinding: FragmentEcKeyPairBinding
+class SecurityFragment : Fragment() {
+    private lateinit var mBinding: FragmentSecurityBinding
     private lateinit var mNavController: NavController
     private lateinit var mMenuHost: MenuHost
-    private lateinit var mECKeyPairAdapter: ECKeyPairAdapter
 
-    private val viewModel: ECDHViewModel by viewModels()
+    private val viewModel: SecurityViewModel by viewModels()
 
     companion object {
         private const val TAG = "DBG@KeyPairFragment"
@@ -38,7 +32,7 @@ class ECDHFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        mBinding = FragmentEcKeyPairBinding.inflate(inflater, container, false)
+        mBinding = FragmentSecurityBinding.inflate(inflater, container, false)
         mNavController = findNavController()
         mMenuHost = requireActivity()
         setData()
@@ -47,14 +41,6 @@ class ECDHFragment : Fragment() {
     }
 
     private fun setView() {
-        mECKeyPairAdapter = ECKeyPairAdapter {
-
-        }
-
-        mBinding.apply {
-            rvKeypair.adapter = mECKeyPairAdapter
-        }
-
         mMenuHost.addMenuProvider(object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
                 menuInflater.inflate(R.menu.menu_key_pair, menu)
@@ -63,8 +49,8 @@ class ECDHFragment : Fragment() {
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 return when (menuItem.itemId) {
                     R.id.menu_key_pair_clean -> {
-                        Toast.makeText(requireContext(), "Cleared key pairs", Toast.LENGTH_SHORT)
-                            .show()
+                        Toast.makeText(requireContext(), "Cleared key pairs", Toast.LENGTH_SHORT).show()
+                        viewModel.deleteEllipticCurveKeyPairs()
                         true
                     }
                     R.id.menu_key_pair_generate -> {
@@ -79,12 +65,5 @@ class ECDHFragment : Fragment() {
     }
 
     private fun setData() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.ecKeyPairs.collectLatest {
-                it?.let {
-                    mECKeyPairAdapter.setData(it)
-                }
-            }
-        }
     }
 }

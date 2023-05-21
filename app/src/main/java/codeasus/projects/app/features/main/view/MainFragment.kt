@@ -33,7 +33,7 @@ class MainFragment : Fragment() {
 
     private fun setView() {
         mBinding.apply {
-            btnToKeyPairFrag.setOnClickListener {
+            btnToEcdhScreen.setOnClickListener {
                 mNavController.navigate(R.id.mainFragToPublicKeyFrag)
             }
         }

@@ -1,4 +1,4 @@
-package codeasus.projects.app.features.ecdh.viewmodel
+package codeasus.projects.app.features.security.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
@@ -15,24 +15,14 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ECDHViewModel @Inject constructor(
+class SecurityViewModel @Inject constructor(
     application: Application,
-    private val ellipticCurveKeyPairRepository: EllipticCurveKeyPairRepository,
     private val eCDHKeyManagementService: ECDHKeyManagementService
 ) : AndroidViewModel(application) {
 
-    private val mECKeyPairs = MutableStateFlow<List<EllipticCurveKeyPair>?>(null)
-    val ecKeyPairs = mECKeyPairs.asStateFlow()
-
-    init {
-        getEllipticCurveKeyPairs()
-    }
-
-    private fun getEllipticCurveKeyPairs() {
+    fun deleteEllipticCurveKeyPairs() {
         viewModelScope.launch(Dispatchers.IO) {
-            ellipticCurveKeyPairRepository.getEllipticCurveKeyPairs().collectLatest {
-                mECKeyPairs.emit(it)
-            }
+            eCDHKeyManagementService.deleteEllipticCurveKeyPairs()
         }
     }
 

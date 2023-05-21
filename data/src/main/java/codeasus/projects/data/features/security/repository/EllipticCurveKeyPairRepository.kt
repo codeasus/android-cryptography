@@ -7,7 +7,7 @@ interface EllipticCurveKeyPairRepository {
 
     fun getEllipticCurveKeyPairByID(id: Long): EllipticCurveKeyPair
 
-    fun getEllipticCurveKeyPairs(): Flow<List<EllipticCurveKeyPair>>
+    fun getEllipticCurveKeyPairs(): List<EllipticCurveKeyPair>
 
     suspend fun insertEllipticCurveKeyPair(ellipticCurveKeyPair: EllipticCurveKeyPair): Long
 

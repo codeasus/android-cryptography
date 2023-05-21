@@ -19,9 +19,9 @@ class EllipticCurveKeyPairRepositoryImpl(
         return ecKeyPairMapper.mapToModel(ecKeyPair)
     }
 
-    override fun getEllipticCurveKeyPairs(): Flow<List<EllipticCurveKeyPair>> {
+    override fun getEllipticCurveKeyPairs(): List<EllipticCurveKeyPair> {
         val ecKeyPairs = ellipticCurveKeyPairDAO.getEllipticCurveKeyPairs()
-        return ecKeyPairs.map { it -> it.map { ecKeyPairMapper.mapToModel(it) } }
+        return ecKeyPairs.map { ecKeyPairMapper.mapToModel(it) }
     }
 
     override suspend fun insertEllipticCurveKeyPair(ellipticCurveKeyPair: EllipticCurveKeyPair): Long {
