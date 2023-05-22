@@ -15,8 +15,8 @@ class MainFragment : Fragment() {
     private lateinit var mBinding: FragmentMainBinding
     private lateinit var mNavController: NavController
 
-    companion object {
-        const val TAG = "DBG@MainFragment"
+    private companion object {
+        val TAG = "DBG@${MainFragment::class.java}"
     }
 
     override fun onCreateView(

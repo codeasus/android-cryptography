@@ -4,6 +4,9 @@ import android.app.Application
 import androidx.room.Room
 import codeasus.projects.data.features.app.db.AndroidCryptographyDatabase
 import codeasus.projects.data.features.app.util.DatabaseConstants
+import codeasus.projects.data.features.contact.dao.ContactDAO
+import codeasus.projects.data.features.contact.repository.ContactRepository
+import codeasus.projects.data.features.contact.repository.ContactRepositoryImpl
 import codeasus.projects.data.features.security.dao.EllipticCurveKeyPairDAO
 import codeasus.projects.data.features.security.repository.EllipticCurveKeyPairRepository
 import codeasus.projects.data.features.security.repository.impl.EllipticCurveKeyPairRepositoryImpl
@@ -21,14 +24,20 @@ object DataModule {
 
     @Provides
     @Singleton
-    fun provideKeyProtector(): KeyProtector {
-        return AESKeyProtector
+    fun provideContactRepository(contactDAO: ContactDAO): ContactRepository {
+        return ContactRepositoryImpl(contactDAO)
     }
 
     @Provides
     @Singleton
-    fun provideEllipticCurveKeyPairDAO(database: AndroidCryptographyDatabase): EllipticCurveKeyPairDAO {
-        return database.getEllipticCurveKeyPairDAO()
+    fun provideContactDAO(database: AndroidCryptographyDatabase): ContactDAO {
+        return database.getContactDAO()
+    }
+
+    @Provides
+    @Singleton
+    fun provideKeyProtector(): KeyProtector {
+        return AESKeyProtector
     }
 
     @Provides
@@ -39,11 +48,20 @@ object DataModule {
 
     @Provides
     @Singleton
+    fun provideEllipticCurveKeyPairDAO(database: AndroidCryptographyDatabase): EllipticCurveKeyPairDAO {
+        return database.getEllipticCurveKeyPairDAO()
+    }
+
+    @Provides
+    @Singleton
     fun providesAndroidCryptographyDatabase(app: Application): AndroidCryptographyDatabase {
-        return Room.databaseBuilder(
-            app.applicationContext,
-            AndroidCryptographyDatabase::class.java,
-            DatabaseConstants.DATABASE_NAME
-        ).build()
+        return Room
+            .databaseBuilder(
+                app.applicationContext,
+                AndroidCryptographyDatabase::class.java,
+                DatabaseConstants.DATABASE_NAME
+            )
+            .fallbackToDestructiveMigration()
+            .build()
     }
 }
