@@ -1,7 +1,10 @@
 package codeasus.projects.data.features.contact.model
 
+import androidx.room.Entity
+import codeasus.projects.data.features.app.util.DatabaseConstants
 import java.util.Objects
 
+@Entity(tableName = DatabaseConstants.ENTITY_CONTACT)
 data class Contact(
     val phoneNumber: String? = null,
     val displayName: String? = null,

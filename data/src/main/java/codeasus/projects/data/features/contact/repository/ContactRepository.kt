@@ -1,11 +1,16 @@
 package codeasus.projects.data.features.contact.repository
 
 import codeasus.projects.data.features.contact.model.Contact
+import kotlinx.coroutines.flow.Flow
 
 
 interface ContactRepository {
 
     fun getContactByPhoneNumber(phoneNumber: String): Contact
+
+    fun getContactsAsFlow(): Flow<List<Contact>>
+
+    fun getContactsMappedByPhoneNumber(): Map<String, Contact>
 
     fun getContacts(): List<Contact>
 

@@ -5,4 +5,7 @@
     <string name="add">Add</string>
     <string name="clean">Clean</string>
     <string name="generate">Generate</string>
+    <string name="sample_full_name">Orhan Rosenfeld</string>
+    <string name="sample_full_name_initials">OR</string>
+    <string name="sample_phone_number">+994552344335</string>
 </resources>

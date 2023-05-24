@@ -12,7 +12,7 @@ import java.util.HashSet
 object ContactUtility {
     private val TAG = "DBG@${ContactUtility::class.java}"
 
-    fun getLocalContactsWithPhoneNumbersA(ctx: Context, localNumber: String?): HashMap<String, Contact> {
+    fun getDeviceContactsMappedByPhoneNumber(ctx: Context): HashMap<String, Contact> {
         val results = hashMapOf<String, Contact>()
 
         val queryURI = ContactsContract.CommonDataKinds.Phone.CONTENT_URI
@@ -59,7 +59,7 @@ object ContactUtility {
         return results
     }
 
-    fun getLocalContactsWithPhoneNumbersB(ctx: Context, localNumber: String?): MutableList<ExContact> {
+    fun getDeviceContacts(ctx: Context): MutableList<ExContact> {
         val contactSet: MutableList<ExContact> = mutableListOf()
 
         val contactContentProvider = ContactsContract.Contacts.CONTENT_URI

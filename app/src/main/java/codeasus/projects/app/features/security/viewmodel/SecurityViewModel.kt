@@ -1,15 +1,14 @@
 package codeasus.projects.app.features.security.viewmodel
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import codeasus.projects.data.features.security.model.EllipticCurveKeyPair
-import codeasus.projects.data.features.security.repository.EllipticCurveKeyPairRepository
-import codeasus.projects.data.features.security.service.ECDHKeyManagementService
+import codeasus.projects.data.features.contact.model.Contact
+import codeasus.projects.data.features.contact.repository.ContactRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -17,18 +16,22 @@ import javax.inject.Inject
 @HiltViewModel
 class SecurityViewModel @Inject constructor(
     application: Application,
-    private val eCDHKeyManagementService: ECDHKeyManagementService
+    private val contactRepository: ContactRepository
 ) : AndroidViewModel(application) {
 
-    fun deleteEllipticCurveKeyPairs() {
+    val contacts = MutableStateFlow<List<Contact>?>(null)
+
+    fun insertContacts(contacts: Set<Contact>) {
         viewModelScope.launch(Dispatchers.IO) {
-            eCDHKeyManagementService.deleteEllipticCurveKeyPairs()
+            contactRepository.insertContacts(contacts)
         }
     }
 
-    fun generateEllipticCurveKeyPairs(count: Int) {
+    fun getContacts() {
         viewModelScope.launch(Dispatchers.IO) {
-            eCDHKeyManagementService.generateEllipticCurveKeyPairs(count)
+            contactRepository.getContactsAsFlow().collectLatest {
+                contacts.emit(it)
+            }
         }
     }
 }
