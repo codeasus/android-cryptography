@@ -11,7 +11,7 @@
         android:label="fragment_security"
         tools:layout="@layout/fragment_security" >
         <action
-            android:id="@+id/publicKeyFragToMainFrag"
+            android:id="@+id/securityFragToMainFrag"
             app:destination="@id/mainFragment" />
     </fragment>
     <fragment
@@ -20,7 +20,7 @@
         android:label="fragment_main"
         tools:layout="@layout/fragment_main" >
         <action
-            android:id="@+id/mainFragToPublicKeyFrag"
+            android:id="@+id/mainFragToSecurityFrag"
             app:destination="@id/securityFragment" />
     </fragment>
 </navigation>

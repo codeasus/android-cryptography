@@ -34,7 +34,7 @@ class MainFragment : Fragment() {
     private fun setView() {
         mBinding.apply {
             btnToEcdhScreen.setOnClickListener {
-                mNavController.navigate(R.id.mainFragToPublicKeyFrag)
+                mNavController.navigate(R.id.mainFragToSecurityFrag)
             }
         }
     }
