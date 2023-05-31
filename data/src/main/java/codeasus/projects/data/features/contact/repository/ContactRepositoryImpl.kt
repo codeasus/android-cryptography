@@ -2,7 +2,6 @@ package codeasus.projects.data.features.contact.repository
 
 import androidx.room.Transaction
 import codeasus.projects.data.features.contact.dao.ContactDAO
-import codeasus.projects.data.features.contact.entity.ContactEntity
 import codeasus.projects.data.features.contact.mapper.ContactMapper
 import codeasus.projects.data.features.contact.model.Contact
 import kotlinx.coroutines.flow.Flow
