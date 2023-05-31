@@ -3,7 +3,6 @@ package codeasus.projects.data.features.contact.repository
 import codeasus.projects.data.features.contact.model.Contact
 import kotlinx.coroutines.flow.Flow
 
-
 interface ContactRepository {
 
     fun getContactByPhoneNumber(phoneNumber: String): Contact
