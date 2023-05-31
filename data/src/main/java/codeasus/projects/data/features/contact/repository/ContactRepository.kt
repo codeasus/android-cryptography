@@ -16,9 +16,11 @@ interface ContactRepository {
 
     suspend fun insertContact(contact: Contact): Long
 
-    suspend fun insertContacts(contactSet: Set<Contact>): List<Long>
+    suspend fun insertContacts(contacts: List<Contact>): List<Long>
 
     suspend fun deleteContactByPhoneNumber(phoneNumber: String)
 
     suspend fun deleteContacts()
+
+    suspend fun completeUpdate(contacts: List<Contact>): List<Long>
 }

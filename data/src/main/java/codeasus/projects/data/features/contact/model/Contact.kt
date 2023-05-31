@@ -22,4 +22,8 @@ data class Contact(
         if (this.phoneNumber == other.phoneNumber) return true
         return false
     }
+
+    override fun toString(): String {
+        return "{displayName: $displayName; phoneNumber: $phoneNumber}"
+    }
 }

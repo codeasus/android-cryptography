@@ -21,7 +21,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var securityManager: SecurityManager
 
     companion object {
-        private const val TAG = "DBG@MainActivity"
+        private val TAG = "DBG@${MainActivity::class.java.name}"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

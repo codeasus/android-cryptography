@@ -14,5 +14,7 @@ interface HybridCryptoParameterRepository {
 
     suspend fun deleteHybridCryptoParameterByPhoneNumber(phoneNumber: String)
 
+    suspend fun deleteHybridCryptoParametersByPhoneNumbers(phoneNumbers: List<String>)
+
     suspend fun deleteHybridCryptoParameters()
 }

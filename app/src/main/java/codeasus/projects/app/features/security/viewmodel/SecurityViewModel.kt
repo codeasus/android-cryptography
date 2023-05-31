@@ -1,7 +1,6 @@
 package codeasus.projects.app.features.security.viewmodel
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import codeasus.projects.data.features.contact.model.Contact
@@ -20,12 +19,6 @@ class SecurityViewModel @Inject constructor(
 ) : AndroidViewModel(application) {
 
     val contacts = MutableStateFlow<List<Contact>?>(null)
-
-    fun insertContacts(contacts: Set<Contact>) {
-        viewModelScope.launch(Dispatchers.IO) {
-            contactRepository.insertContacts(contacts)
-        }
-    }
 
     fun getContacts() {
         viewModelScope.launch(Dispatchers.IO) {

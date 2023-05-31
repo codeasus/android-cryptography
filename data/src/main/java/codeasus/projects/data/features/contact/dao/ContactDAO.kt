@@ -28,7 +28,7 @@ interface ContactDAO {
     suspend fun insertContact(contactEntity: ContactEntity): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertContacts(contactEntitySet: Set<ContactEntity>): List<Long>
+    suspend fun insertContacts(contactEntities: List<ContactEntity>): List<Long>
 
     @Query("DELETE FROM ${DatabaseConstants.ENTITY_CONTACT} WHERE phone_number=:phoneNumber")
     suspend fun deleteContactByPhoneNumber(phoneNumber: String)

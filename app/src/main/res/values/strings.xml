@@ -8,4 +8,7 @@
     <string name="sample_full_name">Orhan Rosenfeld</string>
     <string name="sample_full_name_initials">OR</string>
     <string name="sample_phone_number">+994552344335</string>
+    <string name="contact_permission_description">Contact permission is required for internal synchronization contacts and creation of associated cryptographic keys</string>
+    <string name="allow">Allow</string>
+    <string name="ok">OK</string>
 </resources>

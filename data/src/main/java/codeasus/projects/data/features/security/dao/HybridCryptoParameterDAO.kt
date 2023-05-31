@@ -24,6 +24,9 @@ interface HybridCryptoParameterDAO {
     @Query("DELETE FROM ${DatabaseConstants.ENTITY_HYBRID_CRYPTO_PARAMETER} WHERE phone_number=:phoneNumber")
     suspend fun deleteHybridCryptoParameterByPhoneNumber(phoneNumber: String)
 
+    @Query("DELETE FROM ${DatabaseConstants.ENTITY_HYBRID_CRYPTO_PARAMETER} WHERE phone_number IN (:phoneNumbers)")
+    suspend fun deleteHybridCryptoParametersByPhoneNumbers(phoneNumbers: List<String>)
+
     @Query("DELETE FROM ${DatabaseConstants.ENTITY_HYBRID_CRYPTO_PARAMETER}")
     suspend fun deleteHybridCryptoParameters()
 }

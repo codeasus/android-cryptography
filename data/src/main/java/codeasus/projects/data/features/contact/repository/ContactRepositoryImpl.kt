@@ -1,12 +1,12 @@
 package codeasus.projects.data.features.contact.repository
 
+import androidx.room.Transaction
 import codeasus.projects.data.features.contact.dao.ContactDAO
 import codeasus.projects.data.features.contact.entity.ContactEntity
 import codeasus.projects.data.features.contact.mapper.ContactMapper
 import codeasus.projects.data.features.contact.model.Contact
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.toList
 import javax.inject.Inject
 
 class ContactRepositoryImpl @Inject constructor(private val contactDAO: ContactDAO) :
@@ -41,11 +41,8 @@ class ContactRepositoryImpl @Inject constructor(private val contactDAO: ContactD
         return contactDAO.insertContact(contactMapper.mapToEntity(contact))
     }
 
-    override suspend fun insertContacts(contactSet: Set<Contact>): List<Long> {
-        val mContactSet = mutableSetOf<ContactEntity>()
-        return contactDAO.insertContacts(contactSet.mapTo(mContactSet) {
-            contactMapper.mapToEntity(it)
-        })
+    override suspend fun insertContacts(contacts: List<Contact>): List<Long> {
+        return contactDAO.insertContacts(contacts.map { contactMapper.mapToEntity(it) })
     }
 
     override suspend fun deleteContactByPhoneNumber(phoneNumber: String) {
@@ -54,5 +51,11 @@ class ContactRepositoryImpl @Inject constructor(private val contactDAO: ContactD
 
     override suspend fun deleteContacts() {
         contactDAO.deleteContacts()
+    }
+
+    @Transaction
+    override suspend fun completeUpdate(contacts: List<Contact>): List<Long> {
+        deleteContacts()
+        return insertContacts(contacts)
     }
 }

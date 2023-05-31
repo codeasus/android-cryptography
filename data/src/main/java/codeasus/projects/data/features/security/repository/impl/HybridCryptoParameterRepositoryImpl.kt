@@ -38,6 +38,10 @@ class HybridCryptoParameterRepositoryImpl @Inject constructor
         hybridCryptoParameterDAO.deleteHybridCryptoParameterByPhoneNumber(phoneNumber)
     }
 
+    override suspend fun deleteHybridCryptoParametersByPhoneNumbers(phoneNumbers: List<String>) {
+        hybridCryptoParameterDAO.deleteHybridCryptoParametersByPhoneNumbers(phoneNumbers)
+    }
+
     override suspend fun deleteHybridCryptoParameters() {
         hybridCryptoParameterDAO.deleteHybridCryptoParameters()
     }
