@@ -1,4 +1,4 @@
-package codeasus.projects.security.multiplatform
+package codeasus.projects.playground
 
 import android.util.Base64
 import android.util.Log
