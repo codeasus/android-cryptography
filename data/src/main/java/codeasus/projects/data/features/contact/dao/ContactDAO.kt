@@ -7,6 +7,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import codeasus.projects.data.features.app.util.DatabaseConstants
 import codeasus.projects.data.features.contact.entity.ContactEntity
+import codeasus.projects.data.features.contact.model.ContactCryptoParam
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -20,6 +21,9 @@ interface ContactDAO {
     @MapInfo(keyColumn = "phoneNumber")
     @Query("SELECT C.phone_number AS phoneNumber, * FROM ${DatabaseConstants.ENTITY_CONTACT} AS C")
     fun getContactsMappedByPhoneNumber(): Map<String, ContactEntity>
+
+    @Query("SELECT phone_number, public_key FROM ${DatabaseConstants.ENTITY_CONTACT} WHERE phone_number IN (:phoneNumbers) ")
+    fun getContactCryptoParams(phoneNumbers: List<String>): List<ContactCryptoParam>
 
     @Query("SELECT * FROM ${DatabaseConstants.ENTITY_CONTACT}")
     fun getContacts(): List<ContactEntity>

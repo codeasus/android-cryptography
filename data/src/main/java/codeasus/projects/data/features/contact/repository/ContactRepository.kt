@@ -1,6 +1,7 @@
 package codeasus.projects.data.features.contact.repository
 
 import codeasus.projects.data.features.contact.model.Contact
+import codeasus.projects.data.features.contact.model.ContactCryptoParam
 import kotlinx.coroutines.flow.Flow
 
 interface ContactRepository {
@@ -10,6 +11,8 @@ interface ContactRepository {
     fun getContactsAsFlow(): Flow<List<Contact>>
 
     fun getContactsMappedByPhoneNumber(): Map<String, Contact>
+
+    fun getContactCryptoParams(phoneNumbers: List<String>): List<ContactCryptoParam>
 
     fun getContacts(): List<Contact>
 

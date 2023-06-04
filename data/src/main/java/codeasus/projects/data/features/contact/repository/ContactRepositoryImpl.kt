@@ -4,6 +4,7 @@ import androidx.room.Transaction
 import codeasus.projects.data.features.contact.dao.ContactDAO
 import codeasus.projects.data.features.contact.mapper.ContactMapper
 import codeasus.projects.data.features.contact.model.Contact
+import codeasus.projects.data.features.contact.model.ContactCryptoParam
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -30,6 +31,10 @@ class ContactRepositoryImpl @Inject constructor(private val contactDAO: ContactD
         return contactsMappedByPhoneNumber.mapValues {
             contactMapper.mapToModel(it.value)
         }
+    }
+
+    override fun getContactCryptoParams(phoneNumbers: List<String>): List<ContactCryptoParam> {
+        return contactDAO.getContactCryptoParams(phoneNumbers)
     }
 
     override fun getContacts(): List<Contact> {

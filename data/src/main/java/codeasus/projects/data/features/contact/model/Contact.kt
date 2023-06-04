@@ -9,7 +9,8 @@ data class Contact(
     val phoneNumber: String? = null,
     val displayName: String? = null,
     val rawID: Long? = null,
-    val lookupKey: String? = null
+    val lookupKey: String? = null,
+    val publicKey: String? = null
 ) {
     override fun hashCode(): Int {
         return Objects.hash(phoneNumber)

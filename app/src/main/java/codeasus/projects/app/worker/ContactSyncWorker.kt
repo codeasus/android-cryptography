@@ -26,7 +26,7 @@ class ContactSyncWorker @AssistedInject constructor(
     @Inject
     lateinit var hybridCryptoParameterRepository: HybridCryptoParameterRepository
 
-    private var mNotificationService = NotificationService(ctx)
+    private val mNotificationService = NotificationService(ctx)
 
     companion object {
         private val TAG = "DBG@${ContactSyncWorker::class.java.name}"

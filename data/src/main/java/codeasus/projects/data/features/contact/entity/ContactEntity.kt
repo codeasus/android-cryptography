@@ -22,7 +22,9 @@ data class ContactEntity(
     @ColumnInfo(name = "raw_id")
     var rawID: Long? = 0,
     @ColumnInfo(name = "lookup_key")
-var lookupKey: String? = null
+    var lookupKey: String? = null,
+    @ColumnInfo(name = "public_key")
+    val publicKey: String?,
 ) {
     override fun hashCode(): Int {
         return Objects.hash(phoneNumber)
