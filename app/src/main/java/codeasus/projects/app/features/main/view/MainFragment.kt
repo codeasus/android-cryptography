@@ -28,11 +28,11 @@ class MainFragment : Fragment() {
     private lateinit var mBinding: FragmentMainBinding
     private lateinit var mNavController: NavController
 
-    private companion object {
-        val TAG = "DBG@${MainFragment::class.java.name}"
+    companion object {
+        private const val TAG = "DBG@MainFragment"
     }
 
-    private val mAllPermissions =
+    private val permissions =
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
             arrayOf(
                 Manifest.permission.POST_NOTIFICATIONS,
@@ -45,35 +45,11 @@ class MainFragment : Fragment() {
                 Manifest.permission.READ_CONTACTS
             )
 
-    private val mContactPermissions = arrayOf(
-        Manifest.permission.WRITE_CONTACTS,
-        Manifest.permission.READ_CONTACTS
-    )
-
-    private val mPermissionsRequestLauncher =
+    private val permissionsRequestLauncher =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
             if (it[Manifest.permission.READ_CONTACTS] == true && it[Manifest.permission.WRITE_CONTACTS] == true) {
                 Log.d(TAG, "[ALL]: Contact permissions granted.")
                 enqueueContactSyncWork(requireContext())
-            }
-            if (it[Manifest.permission.POST_NOTIFICATIONS] == true) {
-                Log.d(TAG, "[ALL]: Post notification permission granted.")
-            }
-        }
-
-    private val mContactPermissionsRequestLauncher =
-        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
-            val allGranted = it.values.all { true }
-            if (allGranted) {
-                Log.d(TAG, "Contact permissions granted.")
-                enqueueContactSyncWork(requireContext())
-            }
-        }
-
-    private val mPostNotificationPermissionRequestLauncher =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) {
-            if (it) {
-                Log.d(TAG, "Post notification permission granted.")
             }
         }
 
@@ -89,11 +65,11 @@ class MainFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        init(requireContext())
+        setup(requireContext())
         setView()
     }
 
-    private fun init(ctx: Context) {
+    private fun setup(ctx: Context) {
         registerPermissions(ctx)
     }
 
@@ -107,25 +83,17 @@ class MainFragment : Fragment() {
 
     private fun registerPermissions(ctx: Context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (!checkContactPermissions(ctx) && !checkPostNotificationPermission(ctx)) {
-                mPermissionsRequestLauncher.launch(mAllPermissions)
-                return
-            }
-            if (!checkContactPermissions(ctx)) {
-                mContactPermissionsRequestLauncher.launch(mContactPermissions)
-                return
-            }
-            if (!checkPostNotificationPermission(ctx)) {
-                mPostNotificationPermissionRequestLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            if (!isPostNotificationPermissionGranted(ctx) || !isContactPermissionGranted(ctx)) {
+                permissionsRequestLauncher.launch(permissions)
             }
         } else {
-            if (!checkContactPermissions(ctx)) {
-                mContactPermissionsRequestLauncher.launch(mContactPermissions)
+            if (!isContactPermissionGranted(ctx)) {
+                permissionsRequestLauncher.launch(permissions)
             }
         }
     }
 
-    private fun checkContactPermissions(ctx: Context): Boolean {
+    private fun isContactPermissionGranted(ctx: Context): Boolean {
         return ContextCompat.checkSelfPermission(ctx, Manifest.permission.READ_CONTACTS) ==
                 PackageManager.PERMISSION_GRANTED &&
                 ContextCompat.checkSelfPermission(ctx, Manifest.permission.WRITE_CONTACTS) ==
@@ -133,7 +101,7 @@ class MainFragment : Fragment() {
     }
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-    private fun checkPostNotificationPermission(ctx: Context): Boolean {
+    private fun isPostNotificationPermissionGranted(ctx: Context): Boolean {
         return ContextCompat.checkSelfPermission(ctx, Manifest.permission.POST_NOTIFICATIONS) ==
                 PackageManager.PERMISSION_GRANTED
     }
