@@ -76,7 +76,7 @@ class MainFragment : Fragment() {
     private fun setView() {
         mBinding.apply {
             btnToSecurityScreen.setOnClickListener {
-                mNavController.navigate(R.id.mainFragToSecurityFrag)
+                mNavController.navigate(R.id.mainFragToContactFrag)
             }
         }
     }

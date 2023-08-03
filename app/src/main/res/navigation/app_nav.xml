@@ -6,12 +6,12 @@
     app:startDestination="@id/mainFragment">
 
     <fragment
-        android:id="@+id/securityFragment"
+        android:id="@+id/contactFragment"
         android:name="codeasus.projects.app.features.security.view.ContactFragment"
-        android:label="fragment_security"
-        tools:layout="@layout/fragment_security" >
+        android:label="fragment_contact"
+        tools:layout="@layout/fragment_contact" >
         <action
-            android:id="@+id/securityFragToMainFrag"
+            android:id="@+id/contactFragToMainFrag"
             app:destination="@id/mainFragment" />
     </fragment>
     <fragment
@@ -20,7 +20,7 @@
         android:label="fragment_main"
         tools:layout="@layout/fragment_main" >
         <action
-            android:id="@+id/mainFragToSecurityFrag"
-            app:destination="@id/securityFragment" />
+            android:id="@+id/mainFragToContactFrag"
+            app:destination="@id/contactFragment" />
     </fragment>
 </navigation>

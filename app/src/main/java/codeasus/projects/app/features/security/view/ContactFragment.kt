@@ -18,7 +18,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import codeasus.projects.app.R
-import codeasus.projects.app.databinding.FragmentSecurityBinding
+import codeasus.projects.app.databinding.FragmentContactBinding
 import codeasus.projects.app.features.security.adapter.ContactAdapter
 import codeasus.projects.app.features.security.viewmodel.ContactViewModel
 import codeasus.projects.app.notifications.NotificationService
@@ -30,7 +30,7 @@ import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class ContactFragment : Fragment() {
-    private lateinit var mBinding: FragmentSecurityBinding
+    private lateinit var mBinding: FragmentContactBinding
     private lateinit var mNavController: NavController
     private lateinit var mMenuHost: MenuHost
 
@@ -48,7 +48,7 @@ class ContactFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        mBinding = FragmentSecurityBinding.inflate(inflater, container, false)
+        mBinding = FragmentContactBinding.inflate(inflater, container, false)
         mNavController = findNavController()
         mMenuHost = requireActivity()
         mNotificationService = NotificationService(requireContext())
