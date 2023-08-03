@@ -18,15 +18,15 @@ import java.security.spec.X509EncodedKeySpec
 import javax.crypto.Cipher
 
 object RSACryptographyUtility {
-    private const val KEYSTORE_ALIAS_RSA = "EnigmaApp_RSACryptoAlias"
+    private const val KEYSTORE_ALIAS_RSA = "RSACryptoAlias"
     private const val PROVIDER = "AndroidKeyStore"
     private const val ENCRYPTION_MODE_RSA_ECB_PKCS1_PADDING = "RSA/ECB/PKCS1Padding"
     private const val ALGORITHM_TYPE = "RSA"
 
     private const val FILE_RSA_PUBLIC_KEY = "PublicKey.pem"
 
-    private const val STRING_ERROR_KEYPAIR = "Encryption/Decryption KeyPair has not been generated"
-    private const val STRING_ERROR_DELETE_CERTIFICATE = "Public Key Certificate could not be deleted"
+    private const val STRING_ERROR_KEYPAIR = "Cryptographic key does not exist"
+    private const val STRING_ERROR_DELETE_CERTIFICATE = "PublicKey certificate could not be deleted"
 
     private val TAG = "DBG@CRYPTO@${RSACryptographyUtility::class.java.name}"
 
