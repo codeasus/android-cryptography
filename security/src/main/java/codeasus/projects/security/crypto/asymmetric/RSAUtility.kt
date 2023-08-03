@@ -1,11 +1,8 @@
-package codeasus.projects.security.crypto.rsa
+package codeasus.projects.security.crypto.asymmetric
 
 import android.content.Context
-import android.os.Build.VERSION
-import android.os.Build.VERSION_CODES
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
-import android.util.Base64
 import android.util.Log
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
@@ -17,7 +14,7 @@ import java.security.spec.RSAPublicKeySpec
 import java.security.spec.X509EncodedKeySpec
 import javax.crypto.Cipher
 
-object RSACryptographyUtility {
+object RSAUtility {
     private const val KEYSTORE_ALIAS_RSA = "RSACryptoAlias"
     private const val PROVIDER = "AndroidKeyStore"
     private const val ENCRYPTION_MODE_RSA_ECB_PKCS1_PADDING = "RSA/ECB/PKCS1Padding"
@@ -25,14 +22,13 @@ object RSACryptographyUtility {
 
     private const val FILE_RSA_PUBLIC_KEY = "PublicKey.pem"
 
-    private const val STRING_ERROR_KEYPAIR = "Cryptographic key does not exist"
-    private const val STRING_ERROR_DELETE_CERTIFICATE = "PublicKey certificate could not be deleted"
+    private const val STRING_ERROR_KEYPAIR = "Encryption/Decryption KeyPair has not been generated"
+    private const val STRING_ERROR_DELETE_CERTIFICATE = "Public Key Certificate could not be deleted"
 
-    private val TAG = "DBG@CRYPTO@${RSACryptographyUtility::class.java.name}"
+    private const val TAG = "DBG@CRYPTO@RSA"
 
     // b64, B64 -> base64, Base64
     // data -> ByteArray
-
     fun generateKeyPair() {
         val kPG = KeyPairGenerator.getInstance(KeyProperties.KEY_ALGORITHM_RSA, PROVIDER)
         val kGPS = KeyGenParameterSpec
@@ -52,6 +48,10 @@ object RSACryptographyUtility {
         return KeyStore.getInstance(PROVIDER).apply {
             load(null)
         }
+    }
+
+    fun deleteKeyPair() {
+        getKeyStore().deleteEntry(KEYSTORE_ALIAS_RSA)
     }
 
     fun isKeyGenerated(): Boolean {
@@ -93,7 +93,7 @@ object RSACryptographyUtility {
         }
     }
 
-    private fun getPublicKey(): PublicKey {
+    fun getPublicKey(): PublicKey {
         return getKeyPair().public
     }
 

@@ -83,8 +83,7 @@ class ContactFragment : Fragment() {
                             enqueueContactSyncWork(ctx)
                             return true
                         } else {
-                            Toast.makeText(ctx,
-                                getString(R.string.permission_contact_required), Toast.LENGTH_SHORT).show()
+                            Toast.makeText(ctx, getString(R.string.permission_contact_required), Toast.LENGTH_SHORT).show()
                             return false
                         }
                     }

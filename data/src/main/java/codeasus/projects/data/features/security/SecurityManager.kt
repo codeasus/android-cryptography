@@ -10,6 +10,6 @@ class SecurityManager @Inject constructor(
 )  {
 
     fun initSecurity() {
-        keyProtector.init()
+        keyProtector.initialize()
     }
 }

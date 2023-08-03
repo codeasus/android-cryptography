@@ -1,21 +1,19 @@
 package codeasus.projects.security.crypto.aes
 
-import android.util.Base64
-import codeasus.projects.security.crypto.util.CryptoUtil
+import codeasus.projects.security.crypto.util.dataToB64StrKey
 import java.security.SecureRandom
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
 import javax.crypto.spec.IvParameterSpec
-import javax.crypto.spec.SecretKeySpec
 
-object AESCryptographyUtility {
+object AESUtility {
     private const val ALGORITHM_TYPE = "AES"
     private const val ENCRYPTION_MODE = "AES/CBC/PKCS5Padding"
     private const val KEY_SIZE_AES = 256
     private const val IV_BYTE_ARRAY_LENGTH = 16
 
-    private val TAG = "DBG@CRYPTO@${AESCryptographyUtility::class.java.name}"
+    private const val TAG = "DBG@CRYPTO@AES"
 
     // b64, B64 -> base64, Base64
     // data -> ByteArray
@@ -49,6 +47,6 @@ object AESCryptographyUtility {
     }
 
     fun ivToB64Str(iv: IvParameterSpec): String {
-        return CryptoUtil.dataToB64StrKey(iv.iv)
+        return dataToB64StrKey(iv.iv)
     }
 }

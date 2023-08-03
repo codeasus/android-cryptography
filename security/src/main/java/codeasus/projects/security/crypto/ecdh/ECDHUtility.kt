@@ -35,7 +35,7 @@ object ECDHUtility {
     // b64, B64 -> base64, Base64
     // data -> ByteArray
 
-    private val TAG = "DBG@CRYPTO@${ECDHUtility::class.java.name}"
+    private const val TAG = "DBG@CRYPTO@ECDH"
     private const val CURVE_NAME = "secp256r1"
 
     fun generateSecKeyWithHKDF(dataSecKey: ByteArray): ByteArray {

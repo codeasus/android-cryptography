@@ -9,7 +9,7 @@ import javax.crypto.SecretKey
 import javax.crypto.spec.GCMParameterSpec
 
 object AESKeyProtector: KeyProtector {
-    private const val KEYSTORE_ALIAS_AES = "EnigmaApp_AESCryptoAlias"
+    private const val KEYSTORE_ALIAS_AES = "AESCryptoAlias"
     private const val PROVIDER = "AndroidKeyStore"
     private const val ENCRYPTION_MODE_AES_GCM_NO_PADDING = "AES/GCM/NoPadding"
 
@@ -17,7 +17,7 @@ object AESKeyProtector: KeyProtector {
 
     private val TAG = "DBG@CRYPTO@${AESKeyProtector::class.java.name}"
 
-    override fun init() {
+    override fun initialize() {
         generateSecretKey()
     }
 
@@ -29,7 +29,6 @@ object AESKeyProtector: KeyProtector {
             .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
             .setRandomizedEncryptionRequired(false)
             .build()
-
         keyGenerator.init(keyGenParameterSpec)
         keyGenerator.generateKey()
     }

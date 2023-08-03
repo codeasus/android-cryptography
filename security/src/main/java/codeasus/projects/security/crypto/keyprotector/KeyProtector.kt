@@ -1,8 +1,7 @@
 package codeasus.projects.security.crypto.keyprotector
 
 interface KeyProtector {
-
-    fun init()
+    fun initialize()
 
     fun encrypt(data: ByteArray): ByteArray
 

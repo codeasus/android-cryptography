@@ -2,9 +2,9 @@ package codeasus.projects.playground
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import codeasus.projects.security.crypto.aes.AESCryptographyUtility
+import codeasus.projects.security.crypto.aes.AESUtility
 import codeasus.projects.security.crypto.keyprotector.KeyProtector
-import codeasus.projects.security.crypto.util.CryptoUtil
+import codeasus.projects.security.crypto.util.dataToAESSecretKey
 import java.nio.charset.StandardCharsets
 import java.util.Base64
 import javax.crypto.SecretKey
@@ -26,15 +26,15 @@ fun main() {
 
 class WeakAESKeyProtector : KeyProtector {
 
-    private val mSecretKey = AESCryptographyUtility.generateSecretKey()
-    private val mIV = AESCryptographyUtility.generateIV()
+    private val mSecretKey = AESUtility.generateSecretKey()
+    private val mIV = AESUtility.generateIV()
 
-    override fun init() {
+    override fun initialize() {
         TODO("Not yet implemented")
     }
 
     override fun encrypt(data: ByteArray): ByteArray {
-        return AESCryptographyUtility.encrypt(data, mSecretKey, mIV)
+        return AESUtility.encrypt(data, mSecretKey, mIV)
     }
 
     override fun encrypt(data: ByteArray, ivBytes: ByteArray): ByteArray {
@@ -42,7 +42,7 @@ class WeakAESKeyProtector : KeyProtector {
     }
 
     override fun decrypt(cipherData: ByteArray): ByteArray {
-        return AESCryptographyUtility.decrypt(cipherData, mSecretKey, mIV)
+        return AESUtility.decrypt(cipherData, mSecretKey, mIV)
     }
 
     override fun decrypt(cipherData: ByteArray, ivBytes: ByteArray): ByteArray {
@@ -53,15 +53,15 @@ class WeakAESKeyProtector : KeyProtector {
 class CryptoKeyManagementServiceOne(private val keyProtector: KeyProtector) {
 
     private val _sessionSecretKey =
-        keyProtector.encrypt(AESCryptographyUtility.generateSecretKey().encoded)
+        keyProtector.encrypt(AESUtility.generateSecretKey().encoded)
     private val _sessionIV =
-        keyProtector.encrypt(AESCryptographyUtility.generateIV().iv)
+        keyProtector.encrypt(AESUtility.generateIV().iv)
 
     private fun decryptSessionCryptoParameters(): Pair<SecretKey, IvParameterSpec> {
         val decryptedSecretKey = keyProtector.decrypt(_sessionSecretKey)
         val decryptedIV = keyProtector.decrypt(_sessionIV)
-        val secretKey = CryptoUtil.dataToAESSecretKey(decryptedSecretKey)
-        val iv = AESCryptographyUtility.dataToIV(decryptedIV)
+        val secretKey = dataToAESSecretKey(decryptedSecretKey)
+        val iv = AESUtility.dataToIV(decryptedIV)
         return Pair(secretKey, iv)
     }
 
@@ -74,8 +74,8 @@ class CryptoKeyManagementServiceOne(private val keyProtector: KeyProtector) {
 class CryptoKeyManagementServiceTwo {
 
     fun getSecretKeyAndIVPair(): Pair<SecretKey, IvParameterSpec> {
-        val secretKey = AESCryptographyUtility.generateSecretKey()
-        val iv = AESCryptographyUtility.generateIV()
+        val secretKey = AESUtility.generateSecretKey()
+        val iv = AESUtility.generateIV()
         return Pair(secretKey, iv)
     }
 }
@@ -89,7 +89,7 @@ class MessageEncryptionServiceOne {
     fun encrypt(message: String): String {
         val cryptoParameters = _cryptoKeyManagementServiceOne.getSecretKeyAndIVPair()
         val b64EncodedData = message.toByteArray(StandardCharsets.UTF_8)
-        val encryptedMessage = AESCryptographyUtility.encrypt(
+        val encryptedMessage = AESUtility.encrypt(
             b64EncodedData,
             cryptoParameters.first,
             cryptoParameters.second
@@ -107,7 +107,7 @@ class MessageEncryptionServiceTwo {
     fun encrypt(message: String): String {
         val cryptoParameters = _cryptoKeyManagementServiceTwo.getSecretKeyAndIVPair()
         val b64EncodedData = message.toByteArray(StandardCharsets.UTF_8)
-        val encryptedMessage = AESCryptographyUtility.encrypt(
+        val encryptedMessage = AESUtility.encrypt(
             b64EncodedData,
             cryptoParameters.first,
             cryptoParameters.second

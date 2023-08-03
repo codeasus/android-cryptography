@@ -2,14 +2,14 @@ package codeasus.projects.playground
 
 import android.util.Base64
 import android.util.Log
-import codeasus.projects.security.crypto.aes.AESCryptographyUtility
+import codeasus.projects.security.crypto.aes.AESUtility
 import codeasus.projects.security.crypto.ecdh.ECDHUtility
-import codeasus.projects.security.crypto.rsa.RSACryptographyUtility
-import codeasus.projects.security.crypto.util.CryptoUtil.b64StrKeyToData
-import codeasus.projects.security.crypto.util.CryptoUtil.dataToAESSecretKey
-import codeasus.projects.security.crypto.util.CryptoUtil.dataToB64StrKey
-import codeasus.projects.security.crypto.util.CryptoUtil.dataToUTF8Str
-import codeasus.projects.security.crypto.util.CryptoUtil.uTF8StrToData
+import codeasus.projects.security.crypto.asymmetric.RSAUtility
+import codeasus.projects.security.crypto.util.b64StrKeyToData
+import codeasus.projects.security.crypto.util.dataToAESSecretKey
+import codeasus.projects.security.crypto.util.dataToB64StrKey
+import codeasus.projects.security.crypto.util.dataToUTF8Str
+import codeasus.projects.security.crypto.util.uTF8StrToData
 import org.bouncycastle.crypto.generators.Argon2BytesGenerator
 import org.bouncycastle.crypto.params.Argon2Parameters
 import java.security.PublicKey
@@ -249,13 +249,13 @@ object MultiplatformCryptography {
         val decodedCipherSK = b64StrKeyToData(b64EncodedStrCipherSK)
         val decodedCipherIV = b64StrKeyToData(b64EncodedStrCipherIV)
 
-        val decryptedSK = RSACryptographyUtility.decrypt(decodedCipherSK)
-        val decryptedIV = RSACryptographyUtility.decrypt(decodedCipherIV)
+        val decryptedSK = RSAUtility.decrypt(decodedCipherSK)
+        val decryptedIV = RSAUtility.decrypt(decodedCipherIV)
 
         val secretKey = dataToAESSecretKey(decryptedSK)
-        val iv = AESCryptographyUtility.dataToIV(decryptedIV)
+        val iv = AESUtility.dataToIV(decryptedIV)
 
-        val decryptedData = AESCryptographyUtility.decrypt(decodedCipherData, secretKey, iv)
+        val decryptedData = AESUtility.decrypt(decodedCipherData, secretKey, iv)
         Log.d(TAG, "data: ${dataToUTF8Str(decryptedData)}")
     }
 
@@ -266,11 +266,11 @@ object MultiplatformCryptography {
         iv: IvParameterSpec
     ) {
         val encodedData = uTF8StrToData(message)
-        val cipherData = AESCryptographyUtility.encrypt(encodedData, secretKey, iv)
+        val cipherData = AESUtility.encrypt(encodedData, secretKey, iv)
         val b64StrCipherData = dataToUTF8Str(cipherData)
 
-        val encryptedSK = RSACryptographyUtility.encrypt(secretKey.encoded, publicKey)
-        val encryptedIV = RSACryptographyUtility.encrypt(iv.iv, publicKey)
+        val encryptedSK = RSAUtility.encrypt(secretKey.encoded, publicKey)
+        val encryptedIV = RSAUtility.encrypt(iv.iv, publicKey)
 
         val b64StrEncryptedSK = dataToB64StrKey(encryptedSK)
         val b64StrEncryptedIV = dataToB64StrKey(encryptedIV)
