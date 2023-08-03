@@ -11,4 +11,5 @@
     <string name="contact_permission_description">Contact permission is required for internal synchronization of contacts and generation of associated cryptographic keys</string>
     <string name="allow">Allow</string>
     <string name="ok">OK</string>
+    <string name="permission_contact_required">Contact permission is need</string>
 </resources>

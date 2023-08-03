@@ -27,4 +27,10 @@ class ContactViewModel @Inject constructor(
             }
         }
     }
+
+    fun deleteContacts() {
+        viewModelScope.launch(Dispatchers.IO) {
+            contactRepository.deleteContacts()
+        }
+    }
 }

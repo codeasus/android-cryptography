@@ -23,6 +23,7 @@ import codeasus.projects.app.R
 import codeasus.projects.app.databinding.FragmentMainBinding
 import codeasus.projects.app.util.Constants
 import codeasus.projects.app.worker.ContactSyncWorker
+import codeasus.projects.app.worker.enqueueContactSyncWork
 
 class MainFragment : Fragment() {
     private lateinit var mBinding: FragmentMainBinding
@@ -104,19 +105,5 @@ class MainFragment : Fragment() {
     private fun isPostNotificationPermissionGranted(ctx: Context): Boolean {
         return ContextCompat.checkSelfPermission(ctx, Manifest.permission.POST_NOTIFICATIONS) ==
                 PackageManager.PERMISSION_GRANTED
-    }
-
-    private fun getContactSyncWorkRequest(): OneTimeWorkRequest {
-        return OneTimeWorkRequestBuilder<ContactSyncWorker>()
-            .addTag(Constants.WorkManager.CONTACT_SYNC)
-            .build()
-    }
-
-    private fun enqueueContactSyncWork(ctx: Context) {
-        WorkManager.getInstance(ctx).enqueueUniqueWork(
-            Constants.WorkManager.CONTACT_UNIQUE_WORK,
-            ExistingWorkPolicy.KEEP,
-            getContactSyncWorkRequest()
-        )
     }
 }

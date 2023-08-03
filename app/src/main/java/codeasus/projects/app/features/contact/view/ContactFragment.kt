@@ -23,6 +23,7 @@ import codeasus.projects.app.features.contact.adapter.ContactAdapter
 import codeasus.projects.app.features.contact.viewmodel.ContactViewModel
 import codeasus.projects.app.notifications.NotificationService
 import codeasus.projects.app.util.Constants
+import codeasus.projects.app.worker.enqueueContactSyncWork
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -73,13 +74,19 @@ class ContactFragment : Fragment() {
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 return when (menuItem.itemId) {
                     R.id.menu_clear -> {
-                        Toast.makeText(ctx, "Cleared", Toast.LENGTH_SHORT).show()
+                        mViewModel.deleteContacts()
                         true
                     }
 
                     R.id.menu_generate -> {
-                        Toast.makeText(ctx, "Generated", Toast.LENGTH_SHORT).show()
-                        true
+                        if(areContactsPermissionsGranted(ctx)) {
+                            enqueueContactSyncWork(ctx)
+                            return true
+                        } else {
+                            Toast.makeText(ctx,
+                                getString(R.string.permission_contact_required), Toast.LENGTH_SHORT).show()
+                            return false
+                        }
                     }
 
                     else -> false
@@ -97,8 +104,8 @@ class ContactFragment : Fragment() {
                     if (it.size == 0) return@observe
                     val uniqueContactSyncWork = it[0]
                     when (uniqueContactSyncWork.state) {
-                        WorkInfo.State.RUNNING -> mBinding.progressBar.isVisible = true
-                        else -> mBinding.progressBar.isVisible = false
+                        WorkInfo.State.RUNNING -> showLoading()
+                        else -> hideLoading()
                     }
                 }
         } else {
@@ -112,6 +119,14 @@ class ContactFragment : Fragment() {
                 if (it != null) mContactAdapter.contactDiffer.submitList(it)
             }
         }
+    }
+
+    private fun showLoading() {
+        mBinding.progressBar.isVisible = true
+    }
+
+    private fun hideLoading() {
+        mBinding.progressBar.isVisible = false
     }
 
     private fun areContactsPermissionsGranted(ctx: Context): Boolean {
