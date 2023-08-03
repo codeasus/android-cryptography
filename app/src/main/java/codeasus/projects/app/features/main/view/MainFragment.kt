@@ -83,17 +83,17 @@ class MainFragment : Fragment() {
 
     private fun registerPermissions(ctx: Context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (!isPostNotificationPermissionGranted(ctx) || !isContactPermissionGranted(ctx)) {
+            if (!isPostNotificationPermissionGranted(ctx) || !areContactsPermissionGranted(ctx)) {
                 permissionsRequestLauncher.launch(permissions)
             }
         } else {
-            if (!isContactPermissionGranted(ctx)) {
+            if (!areContactsPermissionGranted(ctx)) {
                 permissionsRequestLauncher.launch(permissions)
             }
         }
     }
 
-    private fun isContactPermissionGranted(ctx: Context): Boolean {
+    private fun areContactsPermissionGranted(ctx: Context): Boolean {
         return ContextCompat.checkSelfPermission(ctx, Manifest.permission.READ_CONTACTS) ==
                 PackageManager.PERMISSION_GRANTED &&
                 ContextCompat.checkSelfPermission(ctx, Manifest.permission.WRITE_CONTACTS) ==

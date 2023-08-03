@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class SecurityViewModel @Inject constructor(
+class ContactViewModel @Inject constructor(
     application: Application,
     private val contactRepository: ContactRepository
 ) : AndroidViewModel(application) {

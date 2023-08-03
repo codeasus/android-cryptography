@@ -4,7 +4,6 @@ import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.core.view.MenuHost
@@ -21,17 +20,16 @@ import androidx.work.WorkManager
 import codeasus.projects.app.R
 import codeasus.projects.app.databinding.FragmentSecurityBinding
 import codeasus.projects.app.features.security.adapter.ContactAdapter
-import codeasus.projects.app.features.security.viewmodel.SecurityViewModel
+import codeasus.projects.app.features.security.viewmodel.ContactViewModel
 import codeasus.projects.app.notifications.NotificationService
 import codeasus.projects.app.util.Constants
-import codeasus.projects.data.features.contact.model.Contact
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class SecurityFragment : Fragment() {
+class ContactFragment : Fragment() {
     private lateinit var mBinding: FragmentSecurityBinding
     private lateinit var mNavController: NavController
     private lateinit var mMenuHost: MenuHost
@@ -39,10 +37,10 @@ class SecurityFragment : Fragment() {
     private lateinit var mNotificationService: NotificationService
 
     private val mContactAdapter by lazy { ContactAdapter() }
-    private val mViewModel: SecurityViewModel by viewModels()
+    private val mViewModel: ContactViewModel by viewModels()
 
     companion object {
-        private val TAG = "DBG@${SecurityFragment::class.java.name}"
+        private const val TAG = "DBG@ContactFragment"
     }
 
     override fun onCreateView(
@@ -54,13 +52,13 @@ class SecurityFragment : Fragment() {
         mNavController = findNavController()
         mMenuHost = requireActivity()
         mNotificationService = NotificationService(requireContext())
-        initComponents()
+        setup()
         setData(requireContext())
         setView(requireContext())
         return mBinding.root
     }
 
-    private fun initComponents() {
+    private fun setup() {
         mBinding.apply {
             rvContact.adapter = mContactAdapter
         }
