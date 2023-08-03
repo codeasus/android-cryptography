@@ -1,4 +1,4 @@
-package codeasus.projects.app.features.security.view
+package codeasus.projects.app.features.contact.view
 
 import android.Manifest
 import android.content.Context
@@ -19,8 +19,8 @@ import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import codeasus.projects.app.R
 import codeasus.projects.app.databinding.FragmentContactBinding
-import codeasus.projects.app.features.security.adapter.ContactAdapter
-import codeasus.projects.app.features.security.viewmodel.ContactViewModel
+import codeasus.projects.app.features.contact.adapter.ContactAdapter
+import codeasus.projects.app.features.contact.viewmodel.ContactViewModel
 import codeasus.projects.app.notifications.NotificationService
 import codeasus.projects.app.util.Constants
 import com.google.android.material.dialog.MaterialAlertDialogBuilder

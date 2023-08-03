@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/contactFragment"
-        android:name="codeasus.projects.app.features.security.view.ContactFragment"
+        android:name="codeasus.projects.app.features.contact.view.ContactFragment"
         android:label="fragment_contact"
         tools:layout="@layout/fragment_contact" >
         <action
