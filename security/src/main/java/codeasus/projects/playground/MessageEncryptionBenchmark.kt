@@ -98,7 +98,6 @@ class MessageEncryptionServiceOne {
     }
 }
 
-
 @RequiresApi(Build.VERSION_CODES.O)
 class MessageEncryptionServiceTwo {
 
